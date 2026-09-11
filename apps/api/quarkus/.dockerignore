@@ -1,0 +1,10 @@
+# Reference ignore list for manual API builds once Compose supports `build.ignore`.
+# With a shared repo context, the root `.dockerignore` must stay compatible with both API and web.
+
+apps/web/
+package.json
+pnpm-workspace.yaml
+pnpm-lock.yaml
+.npmrc
+packages/
+sdk/typescript/

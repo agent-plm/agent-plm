@@ -127,6 +127,11 @@
       <artifactId>plm-sdk</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>io.agentplm</groupId>
+      <artifactId>plm-module-season</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>io.quarkus</groupId>

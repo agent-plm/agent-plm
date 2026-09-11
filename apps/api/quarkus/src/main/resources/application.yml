@@ -15,8 +15,12 @@ quarkus:
     jdbc:
       url: ${PLM_DB_URL:jdbc:postgresql://localhost:5432/plm}
   hibernate-orm:
-    # No entities in Phase 1 — enable with the entity kernel.
-    enabled: false
+    enabled: true
+    database:
+      generation: none
+    mapping:
+      format:
+        global: ignore
   flyway:
     migrate-at-start: true
     locations: classpath:db/migration
@@ -25,6 +29,8 @@ quarkus:
       disabled: ${PLM_OTEL_SDK_DISABLED:true}
   log:
     level: INFO
+  jackson:
+    write-dates-as-timestamps: false
 
 "%dev":
   quarkus:
