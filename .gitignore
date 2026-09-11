@@ -42,3 +42,9 @@ coverage/
 
 # Quarkus
 .quarkus/
+
+# Authelia local runtime
+infra/authelia/runtime/*
+!infra/authelia/runtime/.gitkeep
+infra/authelia/tls/*
+!infra/authelia/tls/.gitkeep

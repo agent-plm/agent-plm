@@ -1,8 +1,28 @@
-.PHONY: dev down api web test migrate compose-config
+.PHONY: dev down api web test migrate compose-config authelia-certs
 
 COMPOSE = docker compose -f docker-compose.yml -f docker-compose.dev.yml
+DOCKER_BUILDKIT = 1
+COMPOSE_DOCKER_CLIENT_BUILD = 1
+export DOCKER_BUILDKIT COMPOSE_DOCKER_CLIENT_BUILD
+AUTHELIA_TLS_CERT = infra/authelia/tls/cert.pem
+AUTHELIA_TLS_KEY = infra/authelia/tls/key.pem
 
-dev:
+authelia-certs:
+	@mkdir -p infra/authelia/tls infra/authelia/runtime
+	@if [ ! -f $(AUTHELIA_TLS_CERT) ]; then \
+		openssl req -x509 -nodes -newkey rsa:4096 -days 3650 \
+			-keyout $(AUTHELIA_TLS_KEY) \
+			-out $(AUTHELIA_TLS_CERT) \
+			-subj "/CN=plm.lvh.me" \
+			-addext "subjectAltName=DNS:plm.lvh.me,DNS:localhost,IP:127.0.0.1"; \
+		echo "Generated $(AUTHELIA_TLS_CERT)"; \
+	fi
+
+authelia-certs-force:
+	@rm -f $(AUTHELIA_TLS_CERT) $(AUTHELIA_TLS_KEY)
+	@$(MAKE) authelia-certs
+
+dev: authelia-certs
 	$(COMPOSE) up --build
 
 down:

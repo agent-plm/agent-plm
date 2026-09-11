@@ -47,12 +47,31 @@ services:
   authelia:
     image: authelia/authelia:4
     volumes:
-      - ./infra/authelia/configuration.yml:/config/configuration.yml:ro
-      - ./infra/authelia/users_database.yml:/config/users_database.yml:ro
+      - authelia-config:/config
+      - ./infra/authelia:/bootstrap:ro
+    expose:
+      - "9091"
+    depends_on:
+      redis:
+        condition: service_healthy
+    entrypoint: ["/bootstrap/docker-entrypoint.sh"]
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:9091/api/health >/dev/null 2>&1 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+
+  authelia-gateway:
+    image: nginx:1.27-alpine
     ports:
       - "${PLM_AUTHELIA_PORT:-9091}:9091"
+    volumes:
+      - ./infra/authelia/nginx-gateway.conf:/etc/nginx/nginx.conf:ro
+      - ./infra/authelia/tls:/etc/nginx/tls:ro
     depends_on:
-      - redis
+      authelia:
+        condition: service_started
 
   cerbos:
     image: ghcr.io/cerbos/cerbos:0.46.0
@@ -101,3 +120,4 @@ volumes:
   postgres-data:
   rustfs-data:
   redis-data:
+  authelia-config:
