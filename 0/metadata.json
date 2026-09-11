@@ -1,0 +1,80 @@
+{
+  "cli_version": "0.10.6",
+  "checkpoint_id": "01M28E45RTGGRB4A6KRVD0YHY0",
+  "session_id": "ed04de1b-73e1-46a2-aa8e-5f5d5e0a16a9",
+  "strategy": "manual-commit",
+  "created_at": "2026-09-11T14:32:11.694Z",
+  "branch": "cursor/plm-project-structure-48f7",
+  "checkpoints_count": 4,
+  "save_step_count": 3,
+  "files_touched": [
+    ".env.example",
+    ".gitignore",
+    "Makefile",
+    "README.md",
+    "apps/web/nextjs/.env.example",
+    "docker-compose.yml",
+    "infra/authelia/README.md",
+    "infra/authelia/configuration.yml",
+    "infra/authelia/docker-entrypoint.sh",
+    "infra/authelia/nginx-gateway.conf",
+    "infra/authelia/runtime/.gitkeep",
+    "infra/authelia/tls/.gitkeep"
+  ],
+  "agent": "Cursor",
+  "model": "composer-2.5",
+  "turn_id": "b9e41377c282",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 22353,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2425248,
+    "output_tokens": 22200,
+    "api_call_count": 3
+  },
+  "session_metrics": {
+    "turn_count": 4
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-09-11T14:32:11.650811Z",
+    "agent_lines": 130,
+    "agent_removed": 16,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 130,
+    "total_lines_changed": 146,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 60,
+      "agent_lines_removed": 16
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 87,
+      "agent_lines_removed": 16
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 130,
+      "agent_lines_removed": 16
+    }
+  ]
+}
