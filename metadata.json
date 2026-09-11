@@ -1,0 +1,35 @@
+{
+  "cli_version": "0.10.6",
+  "checkpoint_id": "01M28FE8KTXCDH695SRXGNE15N",
+  "strategy": "manual-commit",
+  "branch": "cursor/plm-project-structure-48f7",
+  "checkpoints_count": 3,
+  "files_touched": [
+    ".dockerignore",
+    "Makefile",
+    "apps/api/quarkus/.dockerignore",
+    "apps/web/nextjs/.dockerignore",
+    "apps/web/nextjs/Dockerfile.dev",
+    "apps/web/nextjs/README.md",
+    "apps/web/nextjs/docker-dev-entrypoint.sh",
+    "apps/web/nextjs/docker-dev-init.sh",
+    "apps/web/nextjs/next.config.ts",
+    "docker-compose.dev.yml"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 8679,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 3865248,
+    "output_tokens": 14465,
+    "api_call_count": 2
+  }
+}
