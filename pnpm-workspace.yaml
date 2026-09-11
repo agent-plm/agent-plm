@@ -1,0 +1,4 @@
+packages:
+  - "apps/web/nextjs"
+  - "sdk/typescript"
+  - "packages/*"

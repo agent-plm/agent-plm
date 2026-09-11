@@ -1,0 +1,31 @@
+---
+theme: auto
+server:
+  address: tcp://0.0.0.0:9091/
+log:
+  level: info
+identity_validation:
+  reset_password:
+    jwt_secret: local-dev-only-change-me-jwt-secret
+authentication_backend:
+  file:
+    path: /config/users_database.yml
+access_control:
+  default_policy: one_factor
+  rules:
+    - domain: localhost
+      policy: one_factor
+session:
+  secret: local-dev-only-change-me-session-secret
+  cookies:
+    - name: authelia_session
+      domain: localhost
+      authelia_url: http://localhost:9091
+      default_redirection_url: http://localhost:3000
+storage:
+  encryption_key: local-dev-only-change-me-storage-key
+  local:
+    path: /config/db.sqlite3
+notifier:
+  filesystem:
+    filename: /config/notification.txt

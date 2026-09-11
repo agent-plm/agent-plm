@@ -1,0 +1,42 @@
+quarkus:
+  application:
+    name: plm-api
+  http:
+    port: 8080
+    cors:
+      enabled: true
+      origins: ${PLM_CORS_ORIGINS:http://localhost:3000}
+      headers: accept,authorization,content-type,x-requested-with,x-request-id,x-correlation-id
+      methods: GET,POST,PUT,PATCH,DELETE,OPTIONS
+  datasource:
+    db-kind: postgresql
+    username: ${PLM_DB_USER:plm}
+    password: ${PLM_DB_PASSWORD:plm}
+    jdbc:
+      url: ${PLM_DB_URL:jdbc:postgresql://localhost:5432/plm}
+  hibernate-orm:
+    # No entities in Phase 1 — enable with the entity kernel.
+    enabled: false
+  flyway:
+    migrate-at-start: true
+    locations: classpath:db/migration
+  otel:
+    sdk:
+      disabled: ${PLM_OTEL_SDK_DISABLED:true}
+  log:
+    level: INFO
+
+"%dev":
+  quarkus:
+    flyway:
+      migrate-at-start: true
+
+"%test":
+  quarkus:
+    datasource:
+      devservices:
+        enabled: false
+    flyway:
+      migrate-at-start: false
+    hibernate-orm:
+      enabled: false
