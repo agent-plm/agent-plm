@@ -4,6 +4,8 @@ COMPOSE = docker compose -f docker-compose.yml -f docker-compose.dev.yml
 DOCKER_BUILDKIT = 1
 COMPOSE_DOCKER_CLIENT_BUILD = 1
 export DOCKER_BUILDKIT COMPOSE_DOCKER_CLIENT_BUILD
+export DOCKER_UID := $(shell id -u)
+export DOCKER_GID := $(shell id -g)
 AUTHELIA_TLS_CERT = infra/authelia/tls/cert.pem
 AUTHELIA_TLS_KEY = infra/authelia/tls/key.pem
 
@@ -27,6 +29,10 @@ dev: authelia-certs
 
 down:
 	$(COMPOSE) down
+
+web-volumes-reset:
+	$(COMPOSE) down
+	-docker volume rm agent-plm_web-root-node-modules agent-plm_web-app-node-modules agent-plm_web-pnpm-store 2>/dev/null
 
 api:
 	./mvnw -pl apps/api/quarkus -am quarkus:dev

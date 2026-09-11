@@ -12,11 +12,18 @@ services:
       - .:/repo
       - web-root-node-modules:/repo/node_modules
       - web-app-node-modules:/repo/apps/web/nextjs/node_modules
+      - web-pnpm-store:/pnpm
     environment:
       NODE_ENV: development
       NEXT_TELEMETRY_DISABLED: "1"
       WATCHPACK_POLLING: "true"
+      DOCKER_UID: ${DOCKER_UID:-1000}
+      DOCKER_GID: ${DOCKER_GID:-1000}
+      PNPM_HOME: /pnpm
+      HOME: /pnpm/home
+      XDG_CACHE_HOME: /pnpm/cache
 
 volumes:
   web-root-node-modules:
   web-app-node-modules:
+  web-pnpm-store:

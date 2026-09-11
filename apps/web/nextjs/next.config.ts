@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: process.env.DOCKER_BUILD === "true",
   },
   typescript: {
-    ignoreDuringBuilds: process.env.DOCKER_BUILD === "true",
+    ignoreBuildErrors: process.env.DOCKER_BUILD === "true",
   },
 };
 

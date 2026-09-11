@@ -1,0 +1,12 @@
+# Reference ignore list for manual web builds once Compose supports `build.ignore`.
+# With a shared repo context, the root `.dockerignore` must stay compatible with both API and web.
+
+kernel/
+modules/
+apps/api/
+migrations/
+sdk/java/
+pom.xml
+mvnw
+mvnw.cmd
+.mvn/

@@ -10,20 +10,11 @@
 .env.local
 *.log
 
-# Backend / infra not needed for the Next.js image
-kernel/
-modules/
-apps/api/
+# Not needed by API or web image builds (safe for both services).
 infra/
-migrations/
 extensions/
 schemas/
 policies/
-sdk/java/
-pom.xml
-mvnw
-mvnw.cmd
-.mvn/
 PLM_SPEC.md
 LICENSE
 Makefile

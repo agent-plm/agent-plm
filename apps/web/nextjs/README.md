@@ -2,3 +2,10 @@
 
 Local Compose uses `Dockerfile.dev` (fast `next dev` with bind mounts).
 Production image uses `Dockerfile` (standalone output).
+
+If `pnpm install` fails with `EACCES` inside Docker, reset web volumes:
+
+```bash
+make web-volumes-reset
+make dev
+```
