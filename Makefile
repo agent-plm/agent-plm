@@ -1,6 +1,9 @@
 .PHONY: dev down api web test migrate compose-config authelia-certs
 
 COMPOSE = docker compose -f docker-compose.yml -f docker-compose.dev.yml
+DOCKER_BUILDKIT = 1
+COMPOSE_DOCKER_CLIENT_BUILD = 1
+export DOCKER_BUILDKIT COMPOSE_DOCKER_CLIENT_BUILD
 AUTHELIA_TLS_CERT = infra/authelia/tls/cert.pem
 AUTHELIA_TLS_KEY = infra/authelia/tls/key.pem
 

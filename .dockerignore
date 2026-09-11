@@ -9,3 +9,22 @@
 .env
 .env.local
 *.log
+
+# Backend / infra not needed for the Next.js image
+kernel/
+modules/
+apps/api/
+infra/
+migrations/
+extensions/
+schemas/
+policies/
+sdk/java/
+pom.xml
+mvnw
+mvnw.cmd
+.mvn/
+PLM_SPEC.md
+LICENSE
+Makefile
+docker-compose*.yml

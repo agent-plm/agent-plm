@@ -4,5 +4,19 @@ services:
       QUARKUS_PROFILE: dev
 
   web:
+    build:
+      context: .
+      dockerfile: apps/web/nextjs/Dockerfile.dev
+    image: agent-plm-web-dev
+    volumes:
+      - .:/repo
+      - web-root-node-modules:/repo/node_modules
+      - web-app-node-modules:/repo/apps/web/nextjs/node_modules
     environment:
       NODE_ENV: development
+      NEXT_TELEMETRY_DISABLED: "1"
+      WATCHPACK_POLLING: "true"
+
+volumes:
+  web-root-node-modules:
+  web-app-node-modules:
