@@ -1,0 +1,17 @@
+FROM eclipse-temurin:25-jre-noble
+
+WORKDIR /work
+RUN useradd -r -u 1001 -g root plm
+COPY --chown=1001:root target/quarkus-app/lib/ /work/lib/
+COPY --chown=1001:root target/quarkus-app/*.jar /work/
+COPY --chown=1001:root target/quarkus-app/app/ /work/app/
+COPY --chown=1001:root target/quarkus-app/quarkus/ /work/quarkus/
+COPY --chown=1001:root src/main/resources/db/migration /work/migrations
+
+EXPOSE 8080
+USER 1001
+
+ENV JAVA_OPTS_APPEND="-Dquarkus.http.host=0.0.0.0"
+ENV QUARKUS_FLYWAY_LOCATIONS="filesystem:/work/migrations,classpath:db/migration"
+
+ENTRYPOINT ["java", "-jar", "/work/quarkus-run.jar"]

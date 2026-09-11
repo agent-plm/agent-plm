@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.agentplm</groupId>
+    <artifactId>agent-plm</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <artifactId>plm-kernel</artifactId>
+  <packaging>pom</packaging>
+  <name>PLM Kernel</name>
+  <description>Logical kernel modules for the AI-native PLM platform.</description>
+
+  <modules>
+    <module>entity</module>
+    <module>metadata</module>
+    <module>relationship</module>
+    <module>search</module>
+    <module>semantic</module>
+    <module>ontology</module>
+    <module>graph</module>
+    <module>workflow</module>
+    <module>audit</module>
+    <module>document</module>
+    <module>authorization</module>
+    <module>ai</module>
+    <module>extension</module>
+  </modules>
+</project>

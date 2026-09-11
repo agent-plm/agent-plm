@@ -1,0 +1,9 @@
+users:
+  admin:
+    displayname: Administrator
+    # Local-only placeholder hash; replace before enabling login (Phase 1 does not wire Authelia to the UI).
+    password: "$argon2id$v=19$m=65536,t=3,p=4$YnN2ZWxiZXh0cHJvdg$8CWTConBIrXXsQaco3RYt8RoJmxqnpKUXKzY/sQtd7A"
+    email: admin@localhost
+    groups:
+      - admins
+      - dev

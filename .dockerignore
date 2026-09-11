@@ -1,0 +1,11 @@
+.git
+.github
+.cursor
+.entire
+**/.next
+**/node_modules
+**/target
+**/.quarkus
+.env
+.env.local
+*.log

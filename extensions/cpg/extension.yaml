@@ -1,0 +1,10 @@
+id: plm-cpg
+name: CPG PLM Extension
+version: 0.1.0
+requires:
+  plm-core: ">=0.1.0"
+contributes:
+  schema: []
+  backend: []
+  ui: []
+  ai_tools: []
