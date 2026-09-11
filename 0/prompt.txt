@@ -1,37 +1,11 @@
-Rustfs and authelia are clashing on Port 9001
+Stage the changes you worked on, commit, and push for this branch.
+- Current branch: cursor/plm-project-structure-48f7.
+- Base branch: main.
+- Stage the changes you worked on.
+- If there are unrelated files or changes, exclude them.
+- Write a concise commit message.
+- Push after creating the commit.
+- Do not include unrelated files in the commit.
+<timestamp>Friday, Sep 11, 2026, 8:01 PM (UTC+5:30)</timestamp>
 
----
-
-Authelia is failing
-
-chown: /config/configuration.yml: Read-only file system
-
-chown: /config/users_database.yml: Read-only file system
-
-time="2026-09-11T14:14:03Z" level=error msg="Configuration: session: domain config #1 (domain 'localhost'): option 'domain' is not a valid cookie domain: must have at least a single period or be an ip address"
-
-time="2026-09-11T14:14:03Z" level=error msg="Configuration: session: domain config #1 (domain 'localhost'): option 'authelia_url' does not have a secure scheme with a value of 'http://localhost:9091'"
-
-time="2026-09-11T14:14:03Z" level=error msg="Configuration: session: domain config #1 (domain 'localhost'): option 'default_redirection_url' does not have a secure scheme with a value of 'http://localhost:3000'"
-
-time="2026-09-11T14:14:03Z" level=fatal msg="Can't continue due to the errors loading the configuration" stack="github.com/spf13/cobra@v1.10.2/command.go:1000          (*Command).execute\ngithub.com/spf13/cobra@v1.10.2/command.go:1148          (*Command).ExecuteC\ngithub.com/spf13/cobra@v1.10.2/command.go:1071          (*Command).Execute\ngithub.com/authelia/authelia/v4/cmd/authelia/main.go:16 main\ninternal/runtime/atomic/types.go:194                    (*Uint32).Load\nruntime/asm_arm64.s:1039                                goexit"
-
----
-
-chown: /config/configuration.yml: Read-only file system
-
-chown: /config/users_database.yml: Read-only file system
-
-time="2026-09-11T14:14:03Z" level=error msg="Configuration: session: domain config #1 (domain 'localhost'): option 'domain' is not a valid cookie domain: must have at least a single period or be an ip address"
-
-time="2026-09-11T14:14:03Z" level=error msg="Configuration: session: domain config #1 (domain 'localhost'): option 'authelia_url' does not have a secure scheme with a value of 'http://localhost:9091'"
-
-time="2026-09-11T14:14:03Z" level=error msg="Configuration: session: domain config #1 (domain 'localhost'): option 'default_redirection_url' does not have a secure scheme with a value of 'http://localhost:3000'"
-
-time="2026-09-11T14:14:03Z" level=fatal msg="Can't continue due to the errors loading the configuration" stack="github.com/spf13/cobra@v1.10.2/command.go:1000          (*Command).execute\ngithub.com/spf13/cobra@v1.10.2/command.go:1148          (*Command).ExecuteC\ngithub.com/spf13/cobra@v1.10.2/command.go:1071          (*Command).Execute\ngithub.com/authelia/authelia/v4/cmd/authelia/main.go:16 main\ninternal/runtime/atomic/types.go:194                    (*Uint32).Load\nruntime/asm_arm64.s:1039                                goexit"
-
----
-
-authelia-1  | time="2026-09-11T14:22:37Z" level=error msg="An unknown error occurred while handling a request from client." error="tls: first record does not look like a TLS handshake" method=GET path=/ remote_ip=172.19.0.1 status_code=400
-
-When I open authelia on port 9091
+Execute the selected diff-tab commit-and-push action.
