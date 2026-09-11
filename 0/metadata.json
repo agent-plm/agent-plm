@@ -1,0 +1,33 @@
+{
+  "cli_version": "0.10.6",
+  "checkpoint_id": "01M28J4B3891MZWX85MFT3TF3E",
+  "session_id": "ed04de1b-73e1-46a2-aa8e-5f5d5e0a16a9",
+  "strategy": "manual-commit",
+  "created_at": "2026-09-11T15:42:11.483915Z",
+  "branch": "cursor/feature-1",
+  "checkpoints_count": 2,
+  "files_touched": [],
+  "agent": "Cursor",
+  "model": "composer-2.5",
+  "turn_id": "316178f9d076",
+  "checkpoint_transcript_start": 196,
+  "transcript_lines_at_start": 196,
+  "compact_transcript_start": 39,
+  "session_metrics": {
+    "turn_count": 14
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 472,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".cursor/skills/create-plm-entity/SKILL.md": 213,
+        ".cursor/skills/create-plm-entity/examples.md": 66,
+        ".cursor/skills/create-plm-entity/reference.md": 193
+      }
+    }
+  ]
+}
