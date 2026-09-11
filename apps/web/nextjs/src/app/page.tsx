@@ -1,30 +1,31 @@
+import Link from "next/link";
+import { AppShell } from "@/components/AppShell";
+
 const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
 
 export default function HomePage() {
   return (
-    <main className="mx-auto flex min-h-screen max-w-3xl flex-col justify-center gap-8 px-6">
-      <p className="text-sm tracking-[0.2em] text-[var(--accent)] uppercase">
-        Phase 1 · Platform skeleton
+    <AppShell>
+      <p className="text-sm tracking-[0.2em] text-[var(--accent)] uppercase">Phase 2 · First domain feature</p>
+      <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">Agent PLM</h1>
+      <p className="mt-4 max-w-xl text-lg text-[var(--muted)]">
+        An open-source, AI-native Product Lifecycle Management platform. Start with seasons, then
+        expand through the shared entity kernel.
       </p>
-      <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">Agent PLM</h1>
-      <p className="max-w-xl text-lg text-[var(--muted)]">
-        An open-source, AI-native Product Lifecycle Management platform. Opinionated PLM
-        product, extensible kernel.
-      </p>
-      <dl className="grid gap-4 text-sm sm:grid-cols-2">
-        <div className="rounded-lg border border-white/10 p-4">
-          <dt className="text-[var(--muted)]">API</dt>
-          <dd className="mt-1 font-mono">{apiUrl}</dd>
-        </div>
-        <div className="rounded-lg border border-white/10 p-4">
-          <dt className="text-[var(--muted)]">Health</dt>
-          <dd className="mt-1 font-mono">
-            <a className="underline decoration-[var(--accent)] underline-offset-4" href={`${apiUrl}/q/health`}>
-              /q/health
-            </a>
-          </dd>
-        </div>
-      </dl>
-    </main>
+      <div className="mt-8 flex flex-wrap gap-3">
+        <Link
+          href="/seasons"
+          className="rounded-md bg-[var(--accent)] px-4 py-2 text-sm font-medium text-black"
+        >
+          Open seasons
+        </Link>
+        <a
+          className="rounded-md border border-white/15 px-4 py-2 text-sm"
+          href={`${apiUrl}/api/seasons`}
+        >
+          Seasons API
+        </a>
+      </div>
+    </AppShell>
   );
 }

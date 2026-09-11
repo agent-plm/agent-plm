@@ -17,7 +17,7 @@ public class PlatformResource {
         return Map.of(
                 "status", "UP",
                 "service", "plm-api",
-                "phase", "1-skeleton");
+                "phase", "seasons");
     }
 
     @GET
@@ -26,6 +26,6 @@ public class PlatformResource {
         return Map.of(
                 "name", "Agent PLM",
                 "version", "0.1.0-SNAPSHOT",
-                "phase", "Platform skeleton");
+                "phase", "Seasons");
     }
 }

@@ -14,4 +14,12 @@
   <artifactId>plm-module-season</artifactId>
   <name>PLM Module — season</name>
   <description>Seasons and calendar concepts.</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 </project>

@@ -4,7 +4,7 @@ Open-source, AI-native Product Lifecycle Management. Opinionated PLM product plu
 
 Specification: [PLM_SPEC.md](PLM_SPEC.md)
 
-**Current phase:** 1 — platform skeleton (monorepo, Compose, health checks). Domain kernel is not implemented yet.
+**Current phase:** 2 — Seasons (CRUD UI + API on the entity kernel).
 
 ## Stack
 
@@ -59,7 +59,8 @@ pnpm --filter @agent-plm/web dev
 ```
 
 API health: `http://localhost:8080/q/health` and `http://localhost:8080/api/health`  
-UI: `http://localhost:3000`
+Seasons API: `http://localhost:8080/api/seasons`  
+UI: `http://localhost:3000/seasons`
 
 ## Notes
 
