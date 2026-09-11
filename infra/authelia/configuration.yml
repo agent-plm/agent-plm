@@ -13,19 +13,19 @@ authentication_backend:
 access_control:
   default_policy: one_factor
   rules:
-    - domain: localhost
+    - domain: plm.lvh.me
       policy: one_factor
 session:
   secret: local-dev-only-change-me-session-secret
   cookies:
     - name: authelia_session
-      domain: localhost
-      authelia_url: http://localhost:9091
-      default_redirection_url: http://localhost:3000
+      domain: plm.lvh.me
+      authelia_url: https://plm.lvh.me:9091
+      default_redirection_url: https://plm.lvh.me:9091/
 storage:
   encryption_key: local-dev-only-change-me-storage-key
   local:
-    path: /config/db.sqlite3
+    path: /config/runtime/db.sqlite3
 notifier:
   filesystem:
-    filename: /config/notification.txt
+    filename: /config/runtime/notification.txt

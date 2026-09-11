@@ -65,4 +65,5 @@ UI: `http://localhost:3000`
 
 - Redis/Valkey is not the system of record.
 - Authelia and Cerbos are started in Compose; login and real policies come in later phases.
+- Authelia portal: **https://plm.lvh.me:9091** (HTTPS only; `http://` on port 9091 will fail). Run `make authelia-certs` before `make dev`.
 - PostgreSQL 19 from the spec is not used yet; Compose uses a pgvector image on Postgres 17 until 19 is published.
