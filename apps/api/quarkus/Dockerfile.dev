@@ -1,0 +1,13 @@
+# syntax=docker/dockerfile:1
+
+# Fast local dev image: bind-mount repo and run `quarkus:dev` (Dev UI at /q/dev-ui).
+FROM eclipse-temurin:25-jdk-noble
+WORKDIR /repo
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends gosu \
+  && rm -rf /var/lib/apt/lists/*
+COPY apps/api/quarkus/docker-dev-entrypoint.sh /usr/local/bin/docker-dev-entrypoint.sh
+COPY apps/api/quarkus/docker-dev-init.sh /usr/local/bin/docker-dev-init.sh
+RUN chmod +x /usr/local/bin/docker-dev-entrypoint.sh /usr/local/bin/docker-dev-init.sh
+EXPOSE 8080
+ENTRYPOINT ["docker-dev-init.sh"]

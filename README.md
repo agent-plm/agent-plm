@@ -14,7 +14,7 @@ Specification: [PLM_SPEC.md](PLM_SPEC.md)
 | --- | --- |
 | API | Java 25, Quarkus 3.39 |
 | UI | Next.js, TypeScript, Tailwind CSS |
-| Data | PostgreSQL 17 + pgvector (JSON, FTS, graph later) |
+| Data | PostgreSQL 18 + pgvector (JSON, FTS, graph later) |
 | Objects | RustFS (S3) |
 | Cache | Valkey |
 | AuthN | Authelia |
@@ -61,6 +61,7 @@ pnpm --filter @agent-plm/web dev
 ```
 
 API health: `http://localhost:8080/q/health` and `http://localhost:8080/api/health`  
+Quarkus Dev UI (Compose dev only): `http://localhost:8080/q/dev-ui`  
 Seasons API: `http://localhost:8080/api/seasons`  
 UI: `http://localhost:3000/seasons`
 
@@ -70,4 +71,6 @@ UI: `http://localhost:3000/seasons`
 - Authelia and Cerbos are started in Compose; login and real policies come in later phases.
 - Authelia portal: **https://plm.lvh.me:9091** (HTTPS only; `http://` on port 9091 will fail). Run `make authelia-certs` before `make dev`.
 - Local web dev uses `Dockerfile.dev` with bind mounts and skips production `next build`; production image uses `apps/web/nextjs/Dockerfile`.
-- PostgreSQL 19 from the spec is not used yet; Compose uses a pgvector image on Postgres 17 until 19 is published.
+- Local API dev uses `apps/api/quarkus/Dockerfile.dev` (`quarkus:dev`) via `docker-compose.dev.yml`; production image uses `apps/api/quarkus/Dockerfile`.
+- PostgreSQL 19 from the spec is not used yet; Compose uses `pgvector/pgvector:pg18`.
+- Upgrading from an older Compose Postgres volume: run `make postgres-volume-reset` once (destroys local DB data), then `make dev`. PG 18+ uses volume `postgres-data-18` mounted at `/var/lib/postgresql`.

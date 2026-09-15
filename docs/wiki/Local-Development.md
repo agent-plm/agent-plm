@@ -19,6 +19,7 @@ make dev              # full stack
 | UI | http://localhost:3000 |
 | Seasons UI | http://localhost:3000/seasons |
 | API health | http://localhost:8080/api/health |
+| Quarkus Dev UI | http://localhost:8080/q/dev-ui (Compose dev mode only) |
 | Seasons API | http://localhost:8080/api/seasons |
 | Authelia | https://plm.lvh.me:9091 (HTTPS only) |
 

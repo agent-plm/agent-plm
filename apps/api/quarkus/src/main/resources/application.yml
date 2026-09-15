@@ -16,8 +16,8 @@ quarkus:
       url: ${PLM_DB_URL:jdbc:postgresql://localhost:5432/plm}
   hibernate-orm:
     enabled: true
-    database:
-      generation: none
+    schema-management:
+      strategy: none
     mapping:
       format:
         global: ignore
@@ -37,8 +37,18 @@ quarkus:
 
 "%dev":
   quarkus:
+    http:
+      host: 0.0.0.0
+    datasource:
+      devservices:
+        enabled: false
     flyway:
       migrate-at-start: true
+    observability:
+      enabled: false
+    otel:
+      sdk:
+        disabled: true
 
 "%test":
   quarkus:

@@ -1,7 +1,17 @@
 services:
   api:
+    build:
+      context: .
+      dockerfile: apps/api/quarkus/Dockerfile.dev
+    image: agent-plm-api-dev
+    volumes:
+      - .:/repo
+      - api-m2-cache:/m2/repository
     environment:
       QUARKUS_PROFILE: dev
+      MAVEN_OPTS: -Dmaven.repo.local=/m2/repository
+      PLM_OTEL_SDK_DISABLED: "true"
+      QUARKUS_OBSERVABILITY_ENABLED: "false"
 
   web:
     build:
@@ -24,6 +34,7 @@ services:
       XDG_CACHE_HOME: /pnpm/cache
 
 volumes:
+  api-m2-cache:
   web-root-node-modules:
   web-app-node-modules:
   web-pnpm-store:
