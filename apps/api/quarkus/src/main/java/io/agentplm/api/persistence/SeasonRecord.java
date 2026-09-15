@@ -1,19 +1,19 @@
 package io.agentplm.api.persistence;
 
 import java.time.LocalDate;
-import java.util.UUID;
+
+import org.hibernate.annotations.Audited;
+import org.hibernate.annotations.Temporal;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "season")
-public class SeasonRecord {
-
-    @Id
-    public UUID id;
+@Temporal.HistoryTable(name = "season_history")
+@Audited.Table(name = "season_aud")
+public class SeasonRecord extends PlmEntity {
 
     @Column(nullable = false)
     public String code;

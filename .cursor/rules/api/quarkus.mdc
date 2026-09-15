@@ -73,29 +73,48 @@ Shared mappers already exist — reuse them:
 - **Read methods** (`list`, `get`): no `@Transactional` unless lazy-loading requires it.
 - **Write methods** (`create`, `update`, `archive`): `@Transactional` (Jakarta: `jakarta.transaction.Transactional`).
 - Use `jakarta.transaction.Transactional`, never `javax.transaction` or Spring `@Transactional`.
-- Generate IDs with `UUID.randomUUID()` before persist.
-- Timestamps: `OffsetDateTime.now()` for `createdAt` / `updatedAt` on `PlmEntity`.
+- Generate IDs with Hibernate `@UuidGenerator(style = VERSION_7)` on `PlmEntity` — do **not** call `UUID.randomUUID()` before persist.
+- Timestamps: `OffsetDateTime.now()` for `createdAt` / `updatedAt` on `EntityRecord`.
 - Optimistic locking: compare client `version` on update; throw `ConflictException` on mismatch (see `SeasonService`).
-- Archive = soft terminal status on `PlmEntity.status`, not `DELETE` from DB.
-- Emit `AuditEvent` rows for CREATE / UPDATE / ARCHIVE with compact JSON snapshots.
+- Archive = soft terminal status on `EntityRecord.status`, not `DELETE` from DB.
+- Emit application `AuditEvent` rows for CREATE / UPDATE / ARCHIVE with compact JSON snapshots (separate from Hibernate `@Audited` audit logs).
 ---
 ## Universal entity kernel (two-table pattern)
 Every core PLM type uses:
-1. **`entity`** (`PlmEntity`) — identity, name, description, status, JSON attributes, audit columns, `@Version`.
-2. **`{entity}`** (`{Entity}Record`) — type-specific columns; `id` FK → `entity(id) ON DELETE CASCADE`.
-On create: persist `PlmEntity` first, then `{Entity}Record` with the **same UUID**.
+1. **`entity`** (`EntityRecord extends PlmEntity`) — identity, name, description, status, JSON attributes, audit columns, `@Version`.
+2. **`{entity}`** (`{Entity}Record extends PlmEntity`) — type-specific columns; `id` FK → `entity(id) ON DELETE CASCADE`.
+On create: persist `EntityRecord` first (UUID v7 assigned on flush), then `{Entity}Record` with the **same id**.
 Filter by type via `entity.entity_type_id` + `EntityTypes.{ENTITY}` constant.
+---
+## JPA base entity (`PlmEntity`)
+All persistence types extend `PlmEntity` (`@MappedSuperclass`):
+```java
+@MappedSuperclass
+@Temporal
+@Audited
+public abstract class PlmEntity {
+    @Id
+    @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
+    public UUID id;
+}
+```
+Concrete entities add `@Temporal.HistoryTable` and `@Audited.Table` with matching Flyway tables (`V3__temporal_and_audit_tables.sql`).
+- **`EntityRecord`** — `@Table(name = "entity")`, kernel columns + `@Version`.
+- **`{Entity}Record`** — extension table; inherits `id`, do not redeclare `@Id`.
+- **`AuditEvent`** — application audit trail; also `@Temporal` / `@Audited`.
+Changelog: `PlmChangeset` (`@Changelog`) + `PlmChangesetSupplier`; configured in `application.yml` via `hibernate.temporal.*` unsupported properties.
 ---
 ## JPA entities
 Location: `io.agentplm.api.persistence` only.
 | Convention | Rule |
 |------------|------|
-| Class name | `{Entity}Record` (not `Season`, not `SeasonEntity`) |
-| Table | `@Table(name = "{entity_snake}")` matching Flyway |
-| Fields | **Public fields** (active entity style — match `PlmEntity`, `SeasonRecord`) |
-| IDs | `UUID` with `@Id` |
+| Base class | Extend `PlmEntity`; declare history/audit table names on each `@Entity` |
+| Kernel table class | `EntityRecord` maps to `entity` |
+| Extension class | `{Entity}Record` maps to `{entity_snake}` |
+| Fields | **Public fields** (active entity style) |
+| IDs | Inherited `UUID id` from `PlmEntity` — never redeclare |
 | Column names | `@Column(name = "snake_case")` when Java name differs |
-| Version | `@Version public long version` on `PlmEntity` only |
+| Version | `@Version public long version` on `EntityRecord` only |
 | JSON/JSONB | `@JdbcTypeCode(SqlTypes.JSON)` on `Map<String, Object>` fields |
 | Relationships | Prefer shared PK (extension table) over `@OneToOne` for kernel entities |
 | Enums | Store as `String` in DB; use Java enums in domain/DTO layers |
@@ -104,9 +123,9 @@ Location: `io.agentplm.api.persistence` only.
 ```java
 @Entity
 @Table(name = "season")
-public class SeasonRecord {
-    @Id
-    public UUID id;
+@Temporal.HistoryTable(name = "season_history")
+@Audited.Table(name = "season_aud")
+public class SeasonRecord extends PlmEntity {
     @Column(nullable = false)
     public String code;
 }

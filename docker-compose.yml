@@ -2,7 +2,7 @@ name: agent-plm
 
 services:
   postgres:
-    image: pgvector/pgvector:pg17
+    image: pgvector/pgvector:pg18
     environment:
       POSTGRES_USER: ${PLM_DB_USER:-plm}
       POSTGRES_PASSWORD: ${PLM_DB_PASSWORD:-plm}

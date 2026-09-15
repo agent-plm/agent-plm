@@ -1,53 +1,27 @@
 package io.agentplm.api.persistence;
 
-import java.time.OffsetDateTime;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
+import org.hibernate.annotations.Audited;
+import org.hibernate.annotations.Temporal;
+import org.hibernate.annotations.UuidGenerator;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.Version;
+import jakarta.persistence.MappedSuperclass;
 
-@Entity
-@Table(name = "entity")
-public class PlmEntity {
+/**
+ * Base mapped superclass for all PLM JPA entities.
+ * <p>
+ * Provides time-ordered UUID v7 identifiers ({@link UuidGenerator.Style#VERSION_7}),
+ * Hibernate 7.4 temporal history ({@link Temporal}), and audit logging ({@link Audited}).
+ * Concrete entities declare {@link Temporal.HistoryTable} and {@link Audited.Table} names.
+ */
+@MappedSuperclass
+@Temporal
+@Audited
+public abstract class PlmEntity {
 
     @Id
+    @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
     public UUID id;
-
-    @Column(name = "entity_type_id", nullable = false)
-    public UUID entityTypeId;
-
-    @Column(nullable = false)
-    public String name;
-
-    public String description;
-
-    @Column(nullable = false)
-    public String status;
-
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(nullable = false)
-    public Map<String, Object> attributes = new HashMap<>();
-
-    @Column(name = "created_by")
-    public UUID createdBy;
-
-    @Column(name = "created_at", nullable = false)
-    public OffsetDateTime createdAt;
-
-    @Column(name = "updated_by")
-    public UUID updatedBy;
-
-    @Column(name = "updated_at", nullable = false)
-    public OffsetDateTime updatedAt;
-
-    @Version
-    public long version;
 }

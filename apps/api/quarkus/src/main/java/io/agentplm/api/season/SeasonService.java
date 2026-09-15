@@ -12,7 +12,7 @@ import io.agentplm.api.ConflictException;
 import io.agentplm.api.NotFoundException;
 import io.agentplm.api.persistence.AuditEvent;
 import io.agentplm.api.persistence.AuditEventRepository;
-import io.agentplm.api.persistence.PlmEntity;
+import io.agentplm.api.persistence.EntityRecord;
 import io.agentplm.api.persistence.PlmEntityRepository;
 import io.agentplm.api.persistence.SeasonRecord;
 import io.agentplm.api.persistence.SeasonRecordRepository;
@@ -39,7 +39,7 @@ public class SeasonService {
     public List<SeasonResponse> list() {
         List<SeasonResponse> result = new ArrayList<>();
         for (SeasonRecord season : seasons.listAllOrdered()) {
-            PlmEntity entity = entities.findById(season.id);
+            EntityRecord entity = entities.findById(season.id);
             if (entity != null) {
                 result.add(toResponse(entity, season));
             }
@@ -60,10 +60,8 @@ public class SeasonService {
         }
 
         OffsetDateTime now = OffsetDateTime.now();
-        UUID id = UUID.randomUUID();
 
-        PlmEntity entity = new PlmEntity();
-        entity.id = id;
+        EntityRecord entity = new EntityRecord();
         entity.entityTypeId = EntityTypes.SEASON;
         entity.name = draft.name();
         entity.description = draft.description();
@@ -74,12 +72,12 @@ public class SeasonService {
         entities.persist(entity);
 
         SeasonRecord season = new SeasonRecord();
-        season.id = id;
+        season.id = entity.id;
         applySeasonFields(season, draft);
         seasons.persist(season);
 
         SeasonResponse created = toResponse(entity, season);
-        audit("CREATE", id, null, created);
+        audit("CREATE", entity.id, null, created);
         return created;
     }
 
@@ -88,7 +86,7 @@ public class SeasonService {
         SeasonDraft draft = SeasonRules.normalize(toDraft(request));
         SeasonRules.validate(draft);
 
-        PlmEntity entity = requireEntity(id);
+        EntityRecord entity = requireEntity(id);
         SeasonRecord season = requireSeason(id);
 
         if (request.version() != null && request.version() != entity.version) {
@@ -115,7 +113,7 @@ public class SeasonService {
 
     @Transactional
     public void archive(UUID id) {
-        PlmEntity entity = requireEntity(id);
+        EntityRecord entity = requireEntity(id);
         SeasonRecord season = requireSeason(id);
         SeasonResponse before = toResponse(entity, season);
         entity.status = SeasonStatus.CLOSED.name();
@@ -123,8 +121,8 @@ public class SeasonService {
         audit("ARCHIVE", id, before, toResponse(entity, season));
     }
 
-    private PlmEntity requireEntity(UUID id) {
-        PlmEntity entity = entities.findById(id);
+    private EntityRecord requireEntity(UUID id) {
+        EntityRecord entity = entities.findById(id);
         if (entity == null) {
             throw new NotFoundException("Season not found.");
         }
@@ -157,7 +155,7 @@ public class SeasonService {
         season.endsOn = draft.endsOn();
     }
 
-    private static SeasonResponse toResponse(PlmEntity entity, SeasonRecord season) {
+    private static SeasonResponse toResponse(EntityRecord entity, SeasonRecord season) {
         return new SeasonResponse(
                 entity.id,
                 entity.name,
@@ -174,7 +172,6 @@ public class SeasonService {
 
     private void audit(String operation, UUID entityId, SeasonResponse before, SeasonResponse after) {
         AuditEvent event = new AuditEvent();
-        event.id = UUID.randomUUID();
         event.occurredAt = OffsetDateTime.now();
         event.operation = operation;
         event.entityId = entityId;
