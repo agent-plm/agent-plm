@@ -4,7 +4,7 @@ Open-source, AI-native Product Lifecycle Management. Opinionated PLM product plu
 
 Specification: [PLM_SPEC.md](PLM_SPEC.md)
 
-**Wiki:** [agent-plm/agent-plm/wiki](https://github.com/agent-plm/agent-plm/wiki) (auto-published from `main`)
+**Wiki:** [agent-plm/agent-plm/wiki](https://github.com/agent-plm/agent-plm/wiki) (auto-published from `main`; enable **Wiki** under repo Settings → Features before the first publish)
 
 **Current phase:** 2 — Seasons (CRUD UI + API on the entity kernel).
 
