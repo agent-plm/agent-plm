@@ -10,12 +10,12 @@ mkdir -p "${OUT}"
 
 rewrite_links() {
   sed \
-    -e 's/\[PLM_SPEC\.md\](PLM_SPEC\.md)/[[Product-Spec]]/g' \
-    -e 's]\(PLM_SPEC.md)](Product-Spec)]g' \
-    -e 's]\(README.md)](Home)]g' \
-    -e 's]\(docs/wiki/How-It-Works.md)](How-It-Works)]g' \
-    -e 's]\(docs/wiki/Entity-Kernel.md)](Entity-Kernel)]g' \
-    -e 's]\(docs/wiki/Local-Development.md)](Local-Development)]g'
+    -e 's|\[PLM_SPEC\.md\](PLM_SPEC\.md)|[[Product-Spec]]|g' \
+    -e 's|\](PLM_SPEC\.md)|](Product-Spec)|g' \
+    -e 's|\](README\.md)|](Home)|g' \
+    -e 's|\](docs/wiki/How-It-Works\.md)|](How-It-Works)|g' \
+    -e 's|\](docs/wiki/Entity-Kernel\.md)|](Entity-Kernel)|g' \
+    -e 's|\](docs/wiki/Local-Development\.md)|](Local-Development)|g'
 }
 
 copy_page() {
