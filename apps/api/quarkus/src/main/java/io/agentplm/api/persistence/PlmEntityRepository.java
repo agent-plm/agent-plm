@@ -6,5 +6,5 @@ import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class PlmEntityRepository implements PanacheRepositoryBase<PlmEntity, UUID> {
+public class PlmEntityRepository implements PanacheRepositoryBase<EntityRecord, UUID> {
 }

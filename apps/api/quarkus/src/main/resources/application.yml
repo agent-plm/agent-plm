@@ -21,6 +21,9 @@ quarkus:
     mapping:
       format:
         global: ignore
+    unsupported-properties:
+      "hibernate.temporal.table_strategy": HISTORY_TABLE
+      "hibernate.temporal.changeset_id_supplier": io.agentplm.api.persistence.PlmChangesetSupplier
   flyway:
     migrate-at-start: true
     locations: classpath:db/migration
