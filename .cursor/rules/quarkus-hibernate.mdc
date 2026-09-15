@@ -1,0 +1,249 @@
+---
+description: >-
+  Quarkus 3 + Hibernate ORM / Panache conventions for the PLM API. Apply when
+  editing Java in apps/api/quarkus, persistence entities/repositories, Flyway
+  migrations, or adding REST resources and services.
+globs:
+  - apps/api/quarkus/**/*.java
+  - apps/api/quarkus/src/main/resources/**
+  - migrations/**/*.sql
+  - modules/**/src/main/java/**/*.java
+alwaysApply: false
+---
+
+# Quarkus + Hibernate ORM — PLM API Rules
+
+## Stack (do not drift)
+
+| Layer | Choice |
+|-------|--------|
+| Runtime | Quarkus **3.39.x** (BOM-managed) |
+| Language | Java **25** (`maven.compiler.release`) |
+| REST | `quarkus-rest` + `quarkus-rest-jackson` (Jakarta REST) |
+| Persistence | `quarkus-hibernate-orm-panache` + PostgreSQL JDBC |
+| Schema | **Flyway** (`database.generation: none` — never `drop-and-create` / `update`) |
+| Validation | Bean Validation on request DTOs; domain rules in `modules/{entity}` |
+| DI | CDI (`@ApplicationScoped`, `@Inject`) via `quarkus-arc` |
+
+Use the Quarkus BOM versions from the root `pom.xml`. Do not add Spring annotations or javax.* imports.
+
+---
+
+## Repository layout
+
+```
+apps/api/quarkus/          ← deployable API (REST, persistence, wiring)
+  src/main/java/io/agentplm/api/
+    persistence/           ← JPA entities + Panache repositories only
+    {entity}/              ← Resource, Service, Request/Response per entity
+    *ExceptionMapper.java  ← shared HTTP error mapping
+modules/{entity}/          ← pure domain (records, enums, Rules) — NO JPA
+kernel/                    ← shared constants (EntityTypes), no Hibernate
+migrations/                ← Flyway source of truth (duplicate to quarkus resources)
+```
+
+**Domain logic stays out of JPA entities.** Put normalization/validation in `{Entity}Rules` inside `modules/{entity}`. Services orchestrate persistence + audit.
+
+For new core PLM types, follow the **create-plm-entity** skill (Season is the reference).
+
+---
+
+## CDI & bean scope
+
+- `@ApplicationScoped` for services, repositories, and `@Provider` exception mappers.
+- Constructor injection is preferred; field `@Inject` matches existing code — stay consistent within a file.
+- Do **not** use `@Singleton`, `@RequestScoped` on repositories, or manual `new` for managed beans.
+- Keep beans **implicitly indexed** (Jandex runs via parent POM). Avoid reflection-only registration.
+
+```java
+@ApplicationScoped
+public class SeasonService {
+    @Inject PlmEntityRepository entities;
+    @Inject SeasonRecordRepository seasons;
+}
+```
+
+---
+
+## REST resources (`quarkus-rest`)
+
+- Package: `io.agentplm.api.{entity}`.
+- Class: `{Entity}Resource` with `@Path("/api/{entities}")` (plural, kebab-free).
+- Always set `@Produces` / `@Consumes` `APPLICATION_JSON`.
+- Resources are **thin**: delegate to `{Entity}Service`; no `@Transactional`, no direct repository calls.
+- Use `@Valid` on request bodies; return proper status codes:
+  - `POST` → `201 Created` with body
+  - `DELETE` (archive) → `204 No Content`
+  - `GET` / `PUT` → `200` with body
+- Path params: `UUID id` via `@PathParam("id")`.
+- Do not put business validation in resources — call `Rules.validate()` in the service.
+
+Shared mappers already exist — reuse them:
+
+| Exception | Mapper | HTTP |
+|-----------|--------|------|
+| `NotFoundException` | `NotFoundExceptionMapper` | 404 |
+| `ConflictException` | `ConflictExceptionMapper` | 409 |
+| `{Entity}ValidationException` | `{Entity}ValidationExceptionMapper` | 400 |
+
+---
+
+## Service layer
+
+- Class: `{Entity}Service`, `@ApplicationScoped`.
+- **Read methods** (`list`, `get`): no `@Transactional` unless lazy-loading requires it.
+- **Write methods** (`create`, `update`, `archive`): `@Transactional` (Jakarta: `jakarta.transaction.Transactional`).
+- Use `jakarta.transaction.Transactional`, never `javax.transaction` or Spring `@Transactional`.
+- Generate IDs with `UUID.randomUUID()` before persist.
+- Timestamps: `OffsetDateTime.now()` for `createdAt` / `updatedAt` on `PlmEntity`.
+- Optimistic locking: compare client `version` on update; throw `ConflictException` on mismatch (see `SeasonService`).
+- Archive = soft terminal status on `PlmEntity.status`, not `DELETE` from DB.
+- Emit `AuditEvent` rows for CREATE / UPDATE / ARCHIVE with compact JSON snapshots.
+
+---
+
+## Universal entity kernel (two-table pattern)
+
+Every core PLM type uses:
+
+1. **`entity`** (`PlmEntity`) — identity, name, description, status, JSON attributes, audit columns, `@Version`.
+2. **`{entity}`** (`{Entity}Record`) — type-specific columns; `id` FK → `entity(id) ON DELETE CASCADE`.
+
+On create: persist `PlmEntity` first, then `{Entity}Record` with the **same UUID**.
+
+Filter by type via `entity.entity_type_id` + `EntityTypes.{ENTITY}` constant.
+
+---
+
+## JPA entities
+
+Location: `io.agentplm.api.persistence` only.
+
+| Convention | Rule |
+|------------|------|
+| Class name | `{Entity}Record` (not `Season`, not `SeasonEntity`) |
+| Table | `@Table(name = "{entity_snake}")` matching Flyway |
+| Fields | **Public fields** (active entity style — match `PlmEntity`, `SeasonRecord`) |
+| IDs | `UUID` with `@Id` |
+| Column names | `@Column(name = "snake_case")` when Java name differs |
+| Version | `@Version public long version` on `PlmEntity` only |
+| JSON/JSONB | `@JdbcTypeCode(SqlTypes.JSON)` on `Map<String, Object>` fields |
+| Relationships | Prefer shared PK (extension table) over `@OneToOne` for kernel entities |
+| Enums | Store as `String` in DB; use Java enums in domain/DTO layers |
+
+**Do not** add `@PrePersist` / entity callbacks for business rules.
+**Do not** enable Hibernate `ddl-auto` or `database.generation` beyond `none`.
+
+```java
+@Entity
+@Table(name = "season")
+public class SeasonRecord {
+    @Id
+    public UUID id;
+
+    @Column(nullable = false)
+    public String code;
+}
+```
+
+---
+
+## Panache repositories
+
+- Implement `PanacheRepositoryBase<Entity, UUID>` (not `PanacheEntity` inheritance on entities).
+- Annotate `@ApplicationScoped`.
+- Add typed finder methods; keep Panache query strings short and parameterized.
+
+```java
+@ApplicationScoped
+public class SeasonRecordRepository implements PanacheRepositoryBase<SeasonRecord, UUID> {
+    public Optional<SeasonRecord> findByCode(String code) {
+        return find("code", code).firstResultOptional();
+    }
+
+    public List<SeasonRecord> listAllOrdered() {
+        return list("order by code");
+    }
+}
+```
+
+- Use `findById`, `persist`, `list`, `delete` from Panache base.
+- For complex queries, prefer Panache `find("... where x = ?1", val)` over raw SQL unless performance demands native queries.
+- Do not return JPA entities from REST resources — map to `{Entity}Response` records.
+
+---
+
+## Flyway migrations
+
+1. Author in `migrations/V{N}__{description}.sql`.
+2. **Duplicate** the same file to `apps/api/quarkus/src/main/resources/db/migration/`.
+3. Version numbers monotonically increase; never edit applied migrations.
+4. DDL is the source of truth — Hibernate maps to it, not the reverse.
+5. Use PostgreSQL types: `UUID`, `TIMESTAMPTZ`, `JSONB`, `TEXT`, `DATE`.
+6. Enforce invariants in SQL (`UNIQUE`, `CHECK`, FK) **and** in `{Entity}Rules`.
+7. Extension tables: `id UUID PRIMARY KEY REFERENCES entity (id) ON DELETE CASCADE`.
+
+---
+
+## Transactions & consistency
+
+- One `@Transactional` service method = one unit of work.
+- Persist related rows (`PlmEntity` + `{Entity}Record` + `AuditEvent`) inside the same transaction.
+- Do not call `EntityManager.flush()` unless testing a specific constraint race.
+- Catch `OptimisticLockException` at the service boundary → `ConflictException`.
+- Avoid long-running transactions; no external HTTP calls inside `@Transactional` methods.
+
+---
+
+## Configuration (`application.yml`)
+
+Respect existing settings:
+
+- `quarkus.hibernate-orm.database.generation: none`
+- `quarkus.flyway.migrate-at-start: true` (dev/prod)
+- `quarkus.hibernate-orm.mapping.format.global: ignore` (preserve Flyway column names)
+- `quarkus.jackson.write-dates-as-timestamps: false` (ISO-8601 JSON dates)
+- Test profile disables Hibernate (`hibernate-orm.enabled: false`) — prefer plain unit tests for domain; use `@QuarkusTest` + Dev Services only when integration coverage is needed.
+
+New config keys: use env var placeholders `${PLM_*:default}` like existing datasource/CORS settings.
+
+---
+
+## Testing
+
+```bash
+./mvnw -pl apps/api/quarkus -am test
+```
+
+- Domain tests: `modules/{entity}/src/test` — fast, no Quarkus boot.
+- API mapping tests: plain JUnit where possible (`SeasonRequestMappingTest` pattern).
+- Integration: `@QuarkusTest` + RestAssured; rely on Dev Services for PostgreSQL when enabled.
+- Do not depend on migration order in tests when Hibernate is disabled — test domain rules directly.
+
+---
+
+## Anti-patterns (never do)
+
+| Avoid | Use instead |
+|-------|-------------|
+| `EntityManager` in resources | Service + repository |
+| `PanacheEntity` on domain types | `PanacheRepositoryBase` + separate entity class |
+| Lombok on JPA entities | Public fields matching existing entities |
+| `ddl-auto=update` / `drop-and-create` | Flyway migration |
+| Business logic in `@Entity` classes | `{Entity}Rules` in modules |
+| Returning `PlmEntity` from REST | `{Entity}Response` record |
+| `javax.persistence` / `javax.ws.rs` | `jakarta.*` |
+| Duplicate Flyway paths | Both `migrations/` and `apps/api/quarkus/.../db/migration/` |
+| Hard delete of business entities | Archive via status transition + audit |
+| N+1 queries in `list()` without need | Batch fetch or a single query when lists grow |
+
+---
+
+## New entity checklist
+
+1. Flyway migration (both locations) + `EntityTypes` UUID
+2. `modules/{entity}` — Draft, Status, Rules, ValidationException
+3. `api.persistence` — `{Entity}Record`, `{Entity}RecordRepository`
+4. `api.{entity}` — Request, Response, Service, Resource, ExceptionMapper
+5. Wire `plm-module-{entity}` in `apps/api/quarkus/pom.xml`
+6. Run `./mvnw -pl apps/api/quarkus -am test`
