@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
+import { PageHeader } from "@/components/PageHeader";
 import { SeasonForm } from "@/components/SeasonForm";
 import { createSeason } from "@/lib/seasons";
 
@@ -10,15 +11,16 @@ export default function NewSeasonPage() {
 
   return (
     <AppShell>
-      <p className="text-sm tracking-[0.2em] text-[var(--accent)] uppercase">Core PLM</p>
-      <h1 className="mt-2 mb-8 text-3xl font-semibold tracking-tight">New season</h1>
-      <SeasonForm
-        submitLabel="Create season"
-        onSubmit={async (input) => {
-          const created = await createSeason(input);
-          router.push(`/seasons/${created.id}`);
-        }}
-      />
+      <PageHeader eyebrow="Core PLM" title="New season" description="Create a calendar season for planning and assortment work." />
+      <div className="max-w-2xl rounded-xl border border-border bg-card p-6 shadow-sm">
+        <SeasonForm
+          submitLabel="Create season"
+          onSubmit={async (input) => {
+            const created = await createSeason(input);
+            router.push(`/seasons/${created.id}`);
+          }}
+        />
+      </div>
     </AppShell>
   );
 }

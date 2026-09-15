@@ -1,5 +1,8 @@
 ---
-description: Next.js 15 App Router frontend conventions, patterns, and best practices for the Agent PLM web app. Apply when editing or creating files under apps/web/nextjs.
+description: >-
+  Next.js 15 App Router frontend conventions for Agent PLM. Light-only white
+  admin theme (studio-admin / shadcn tokens). Apply when editing files under
+  apps/web/nextjs.
 globs: apps/web/nextjs/**
 alwaysApply: false
 ---
@@ -15,8 +18,10 @@ These rules apply to `apps/web/nextjs` — a Next.js 15 App Router app with Reac
 | App root | `apps/web/nextjs/` |
 | Source | `src/` |
 | Routes | `src/app/` (App Router only — no `pages/`) |
-| Components | `src/components/` |
+| Components | `src/components/` (`AppShell`, `PageHeader`, `{Entity}Form`, `{Entity}List`) |
 | API clients | `src/lib/{entity}.ts` |
+| Navigation | `src/lib/navigation.ts` |
+| Utilities | `src/lib/utils.ts` (`cn()`) |
 | Path alias | `@/*` → `src/*` |
 | Package manager | `pnpm` |
 | API base URL | `process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080"` |
@@ -25,9 +30,9 @@ These rules apply to `apps/web/nextjs` — a Next.js 15 App Router app with Reac
 
 ### Server vs client components
 
-- **Default to Server Components.** Pages and layouts are Server Components unless they need browser-only APIs.
-- Add `"use client"` only when the component uses: `useState`, `useEffect`, event handlers (`onClick`, `onChange`), browser APIs, or hooks like `useRouter` / `useParams`.
-- Keep client boundaries small. Extract interactive pieces into client components; leave static shell, headings, and layout in Server Components.
+- **Default to Server Components** for list pages and static layout.
+- Add `"use client"` when the page or component uses: `useState`, `useEffect`, event handlers, browser APIs, or `useRouter` / `useParams`.
+- Current pattern: list pages are Server Components; `new` and `[id]` pages are Client Components (need `useRouter` for redirect/archive). Interactive pieces (`{Entity}List`, `{Entity}Form`) are always client components.
 
 ```tsx
 // Good: server page composes client list
@@ -101,20 +106,29 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 
 ### Page layout
 
-Every entity page wraps content in `AppShell`:
+Every page wraps content in `AppShell` and uses `PageHeader` for titles, descriptions, and actions:
 
 ```tsx
 <AppShell>
-  <p className="text-sm tracking-[0.2em] text-[var(--accent)] uppercase">Core PLM</p>
-  <h1 className="mt-2 text-3xl font-semibold tracking-tight">{title}</h1>
-  {/* page content */}
+  <PageHeader
+    eyebrow="Core PLM"
+    title="Seasons"
+    description="Calendar seasons used to plan collections and product development."
+    actions={
+      <Link href="/seasons/new" className="inline-flex rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
+        New season
+      </Link>
+    }
+  />
+  <SeasonList />
 </AppShell>
 ```
 
-- List page: heading, description, "New {entity}" `Link`, `{Entity}List`.
-- New page: heading + `{Entity}Form` with `create{Entity}` + redirect.
-- Detail page: heading + `{Entity}Form` with `initial` + `update{Entity}`.
-- Add nav links in `AppShell.tsx` when introducing a new entity.
+- List page: `PageHeader` + primary action link + `{Entity}List`.
+- New page: `PageHeader` + `{Entity}Form` in a `rounded-xl border border-border bg-card p-6 shadow-sm` card.
+- Detail page: `PageHeader` (dynamic title when loaded) + `{Entity}Form` + archive action.
+- Add nav entries in `src/lib/navigation.ts` (sidebar + mobile tabs read from there).
+- Shared helpers: `src/lib/utils.ts` (`cn()` for conditional classes).
 
 ### Forms (`{Entity}Form.tsx`)
 
@@ -124,14 +138,16 @@ Every entity page wraps content in `AppShell`:
 - Track `pending` and `error` state locally.
 - Use `defaultValue` (not `value`) for uncontrolled inputs.
 - Disable submit button while `pending`; show "Saving…" label.
-- Surface API errors in a styled alert (`border-red-500/40 bg-red-500/10`).
+- Surface API errors in a styled alert: `rounded-lg border border-destructive/20 bg-destructive/10 px-3 py-2 text-sm text-destructive`.
+- Form field styling: `rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus-visible:ring-2 focus-visible:ring-ring`.
 
 ### Lists (`{Entity}List.tsx`)
 
 - Client component; fetch in `useEffect` on mount.
-- Handle three states: `loading`, `error`, empty, and data.
+- Handle four states: `loading`, `error`, empty, and data.
 - Link primary identifier (usually `code`) to `/{entities}/${id}`.
-- Use semantic `<table>` for tabular data.
+- Wrap tables in `rounded-xl border border-border bg-card shadow-sm`; header row uses `bg-muted/50 text-muted-foreground`.
+- Use status badges with semantic colors (see `SeasonList` `statusStyles`).
 
 ### Error handling in components
 
@@ -145,15 +161,17 @@ Never swallow errors silently. Never use `any` for caught values.
 
 ## Styling (Tailwind CSS v4)
 
-- Global tokens live in `src/app/globals.css` — use CSS variables, not hardcoded hex in components:
-  - `var(--background)`, `var(--foreground)`, `var(--muted)`, `var(--accent)`
+- **Light theme only** — no dark mode. Root layout sets `className="light"` on `<html>` and `export const viewport = { colorScheme: "light" }`. Do not add `.dark` blocks, theme toggles, or `prefers-color-scheme` overrides. Do not put `colorScheme` in `metadata` — Next.js 15 requires the `viewport` export.
+- Visual reference: [studio-admin dashboard](https://studio-admin.arhamkhnz.com/dashboard/default) / [tanstack-shadcn-admin-dashboard](https://github.com/arhamkhnz/tanstack-shadcn-admin-dashboard) — white surfaces, gray sidebar, neutral primary buttons.
+- Global tokens live in `src/app/globals.css` (shadcn-style oklch palette). Prefer semantic Tailwind classes over raw CSS variables in components:
+  - Surfaces: `bg-background`, `bg-card`, `bg-muted/30`, `bg-sidebar`
+  - Text: `text-foreground`, `text-muted-foreground`, `text-card-foreground`
+  - Borders: `border-border`, `border-input`, `border-sidebar-border`
+  - Actions: `bg-primary text-primary-foreground`, secondary `border border-input bg-background hover:bg-accent`
+  - Errors: `border-destructive/20 bg-destructive/10 text-destructive`
 - Import Tailwind once in `globals.css`: `@import "tailwindcss";`
-- Dark theme patterns:
-  - Borders: `border-white/10`, `border-white/15`
-  - Surfaces: `bg-transparent`, `rounded-md`, `rounded-lg`
-  - Primary CTA: `bg-[var(--accent)] text-black`
-  - Muted text: `text-[var(--muted)]`
-- Responsive: use `sm:`, `md:` prefixes (`sm:grid-cols-2`, `sm:text-5xl`).
+- Layout shell: wrap pages in `AppShell`; use `PageHeader` for title/actions. Navigation items live in `src/lib/navigation.ts`.
+- Responsive: use `sm:`, `md:` prefixes (`sm:grid-cols-2`, `md:flex` for sidebar).
 - Fonts: loaded in root `layout.tsx` via `next/font/google`; reference `var(--font-geist-sans)` in CSS.
 - Do not add CSS-in-JS libraries, styled-components, or separate `.module.css` files unless explicitly requested.
 
@@ -196,7 +214,7 @@ When adding Server Component fetching later:
 After frontend changes, run:
 
 ```bash
-cd apps/web/nextjs && pnpm exec tsc --noEmit
+cd apps/web/nextjs && pnpm exec tsc --noEmit   # or: ./node_modules/.bin/tsc --noEmit
 cd apps/web/nextjs && pnpm lint
 ```
 
@@ -205,7 +223,7 @@ For entity work, also smoke-test UI at `http://localhost:3000/{entities}`.
 ## Do Not
 
 - Add `pages/` router, middleware, or auth unless explicitly requested.
-- Install UI frameworks (shadcn, MUI, Chakra) unless the user asks.
+- Install shadcn/ui, MUI, Chakra, or other UI kits unless the user asks — use existing CSS-variable tokens and Tailwind utilities only.
 - Hardcode `http://localhost:8080` in components — use the lib-layer `apiUrl` constant.
 - Put business validation in the frontend — backend `{Entity}Rules` owns invariants.
 - Create one-off `fetch` calls in components — extend `src/lib/`.
@@ -219,12 +237,12 @@ When adding a new PLM entity UI, also read the `create-plm-entity` skill. Minimu
 
 ```
 src/lib/{entities}.ts
+src/lib/navigation.ts          ← add nav item
 src/components/{Entity}Form.tsx
 src/components/{Entity}List.tsx
 src/app/{entities}/page.tsx
 src/app/{entities}/new/page.tsx
 src/app/{entities}/[id]/page.tsx
-AppShell nav link
 ```
 
-Copy Seasons (`seasons.ts`, `SeasonForm`, `SeasonList`, `app/seasons/**`) as the canonical reference.
+Copy Seasons (`seasons.ts`, `SeasonForm`, `SeasonList`, `app/seasons/**`, `PageHeader` usage) as the canonical reference.
