@@ -1,0 +1,37 @@
+{
+  "cli_version": "0.10.6",
+  "checkpoint_id": "01M2JNARNZ0FYW7XXWRMP2T13V",
+  "strategy": "manual-commit",
+  "branch": "cursor_ui",
+  "checkpoints_count": 4,
+  "files_touched": [
+    "apps/web/nextjs/src/app/globals.css",
+    "apps/web/nextjs/src/app/layout.tsx",
+    "apps/web/nextjs/src/app/page.tsx",
+    "apps/web/nextjs/src/app/seasons/[id]/page.tsx",
+    "apps/web/nextjs/src/app/seasons/new/page.tsx",
+    "apps/web/nextjs/src/app/seasons/page.tsx",
+    "apps/web/nextjs/src/components/AppShell.tsx",
+    "apps/web/nextjs/src/components/PageHeader.tsx",
+    "apps/web/nextjs/src/components/SeasonForm.tsx",
+    "apps/web/nextjs/src/components/SeasonList.tsx",
+    "apps/web/nextjs/src/lib/navigation.ts",
+    "apps/web/nextjs/src/lib/utils.ts"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 81848,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2903200,
+    "output_tokens": 19989,
+    "api_call_count": 3
+  }
+}

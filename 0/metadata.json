@@ -1,0 +1,106 @@
+{
+  "cli_version": "0.10.6",
+  "checkpoint_id": "01M2JNARNZ0FYW7XXWRMP2T13V",
+  "session_id": "1aeb623e-a655-49a7-991a-b2420d37b214",
+  "strategy": "manual-commit",
+  "created_at": "2026-09-15T13:50:32.176055Z",
+  "branch": "cursor_ui",
+  "checkpoints_count": 4,
+  "save_step_count": 3,
+  "files_touched": [
+    "apps/web/nextjs/src/app/globals.css",
+    "apps/web/nextjs/src/app/layout.tsx",
+    "apps/web/nextjs/src/app/page.tsx",
+    "apps/web/nextjs/src/app/seasons/[id]/page.tsx",
+    "apps/web/nextjs/src/app/seasons/new/page.tsx",
+    "apps/web/nextjs/src/app/seasons/page.tsx",
+    "apps/web/nextjs/src/components/AppShell.tsx",
+    "apps/web/nextjs/src/components/PageHeader.tsx",
+    "apps/web/nextjs/src/components/SeasonForm.tsx",
+    "apps/web/nextjs/src/components/SeasonList.tsx",
+    "apps/web/nextjs/src/lib/navigation.ts",
+    "apps/web/nextjs/src/lib/utils.ts"
+  ],
+  "agent": "Cursor",
+  "model": "composer-2.5",
+  "turn_id": "5edf29a027b1",
+  "checkpoint_transcript_start": 308,
+  "transcript_lines_at_start": 308,
+  "compact_transcript_start": 69,
+  "token_usage": {
+    "input_tokens": 81848,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2903200,
+    "output_tokens": 19989,
+    "api_call_count": 3
+  },
+  "session_metrics": {
+    "turn_count": 16,
+    "context_tokens": 187837,
+    "context_window_size": 200000
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-09-15T13:50:32.045263Z",
+    "agent_lines": 298,
+    "agent_removed": 154,
+    "human_added": 321,
+    "human_modified": 68,
+    "human_removed": 0,
+    "total_committed": 687,
+    "total_lines_changed": 871,
+    "agent_percentage": 51.894374282433986,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 9,
+      "user_lines_removed": 8,
+      "agent_lines_added": 362,
+      "agent_lines_removed": 153,
+      "user_added_per_file": {
+        ".cursor/rules/nextjs-frontend.mdc": 9
+      },
+      "user_removed_per_file": {
+        ".cursor/rules/nextjs-frontend.mdc": 8
+      }
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 190,
+      "user_lines_removed": 30,
+      "agent_lines_added": 362,
+      "agent_lines_removed": 153,
+      "user_added_per_file": {
+        ".cursor/rules/api/quarkus.mdc": 144,
+        ".cursor/rules/nextjs-frontend.mdc": 46
+      },
+      "user_removed_per_file": {
+        ".cursor/rules/api/quarkus.mdc": 2,
+        ".cursor/rules/nextjs-frontend.mdc": 28
+      }
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 190,
+      "user_lines_removed": 30,
+      "agent_lines_added": 366,
+      "agent_lines_removed": 154,
+      "user_added_per_file": {
+        ".cursor/rules/api/quarkus.mdc": 144,
+        ".cursor/rules/nextjs-frontend.mdc": 46
+      },
+      "user_removed_per_file": {
+        ".cursor/rules/api/quarkus.mdc": 2,
+        ".cursor/rules/nextjs-frontend.mdc": 28
+      }
+    }
+  ]
+}

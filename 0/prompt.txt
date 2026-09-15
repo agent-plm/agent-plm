@@ -1,0 +1,46 @@
+Stage the changes you worked on, commit, and push for this branch.
+- Current branch: cursor_quarkus_rules_base.
+- Base branch: main.
+- Stage the changes you worked on.
+- If there are unrelated files or changes, exclude them.
+- Write a concise commit message.
+- Push after creating the commit.
+- Do not include unrelated files in the commit.
+<timestamp>Tuesday, Sep 15, 2026, 7:02 PM (UTC+5:30)</timestamp>
+
+Execute the selected diff-tab commit-and-push action.
+
+---
+
+For all UI, I want only white (No Dark) and this theme across the App
+
+https://studio-admin.arhamkhnz.com/dashboard/default
+
+https://github.com/arhamkhnz/tanstack-shadcn-admin-dashboard
+
+---
+
+update all rules .mdc files with latest changes
+
+---
+
+Compiling / ...
+web-1               |  ✓ Compiled /seasons in 5.9s (628 modules)
+web-1               |  ⚠ Unsupported metadata colorScheme is configured in metadata export in /. Please move it to viewport export instead.
+web-1               | Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+web-1               |  ⚠ Unsupported metadata colorScheme is configured in metadata export in /. Please move it to viewport export instead.
+web-1               | Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+web-1               |  ⚠ Unsupported metadata colorScheme is configured in metadata export in /seasons. Please move it to viewport export instead.
+web-1               | Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+web-1               |  GET / 200 in 6493ms
+web-1               |  GET / 200 in 668ms
+web-1               |  ⚠ Unsupported metadata colorScheme is configured in metadata export in /seasons. Please move it to viewport export instead.
+web-1               | Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+web-1               |  GET /seasons 200 in 44ms
+web-1               |  ⚠ Unsupported metadata colorScheme is configured in metadata export in /seasons. Please move it to viewport export instead.
+web-1               | Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+web-1               |  GET /seasons 200 in 67ms
+web-1               |  ✓ Compiled /seasons/[id] in 454ms (625 modules)
+web-1               |  ⚠ Unsupported metadata colorScheme is configured in metadata export in /seasons/[id]. Please move it to viewport export instead.
+web-1               | Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+web-1               |  GET /seasons/aaaaaaaa-0002-4000-8000-000000000002 200 in 909ms
