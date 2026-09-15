@@ -1,12 +1,11 @@
-I need all Quarkus Entities implement 
+Stage the changes you worked on, commit, and push for this branch.
+- Current branch: cursor_quarkus_rules_base.
+- Base branch: main.
+- Stage the changes you worked on.
+- If there are unrelated files or changes, exclude them.
+- Write a concise commit message.
+- Push after creating the commit.
+- Do not include unrelated files in the commit.
+<timestamp>Tuesday, Sep 15, 2026, 6:10 PM (UTC+5:30)</timestamp>
 
-@Temporal , @Audited from Hibernate 7.4 , Implement in base apps/api/quarkus/src/main/java/io/agentplm/api/persistence/PlmEntity.java , so that everything inhearting will use it
-For id, we will use UUID7 (Time Series) , using org.hibernate.annotations.UuidGenerator, Postgres 18+ Supports it
-
----
-
-How can I have a stage in CI/CD , Post everything to publish all Notes and how agent plm works to Github Wiki - https://github.com/agent-plm/agent-plm/wiki
-
----
-
-use a separate workflow so wiki publish is independent of PR CI
+Execute the selected diff-tab commit-and-push action.
