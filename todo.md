@@ -10,4 +10,5 @@
 - Improve Harness and nudge cursor to use new CLI commands
 - Add this for API Testing - https://schemathesis.io/
 - Publish API Testing, UI Testing, Quarkus Testing Reults in Ci/CD
-- 
+- Add Clickhouse Obs
+- Add SSL Cert and domain for all
