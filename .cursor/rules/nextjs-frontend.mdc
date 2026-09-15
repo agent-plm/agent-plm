@@ -1,0 +1,230 @@
+---
+description: Next.js 15 App Router frontend conventions, patterns, and best practices for the Agent PLM web app. Apply when editing or creating files under apps/web/nextjs.
+globs: apps/web/nextjs/**
+alwaysApply: false
+---
+
+# Next.js Frontend Rules (Agent PLM)
+
+These rules apply to `apps/web/nextjs` — a Next.js 15 App Router app with React 19, TypeScript (strict), Tailwind CSS v4, and a Quarkus REST backend.
+
+## Stack & Paths
+
+| Item | Convention |
+|------|------------|
+| App root | `apps/web/nextjs/` |
+| Source | `src/` |
+| Routes | `src/app/` (App Router only — no `pages/`) |
+| Components | `src/components/` |
+| API clients | `src/lib/{entity}.ts` |
+| Path alias | `@/*` → `src/*` |
+| Package manager | `pnpm` |
+| API base URL | `process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080"` |
+
+## App Router Architecture
+
+### Server vs client components
+
+- **Default to Server Components.** Pages and layouts are Server Components unless they need browser-only APIs.
+- Add `"use client"` only when the component uses: `useState`, `useEffect`, event handlers (`onClick`, `onChange`), browser APIs, or hooks like `useRouter` / `useParams`.
+- Keep client boundaries small. Extract interactive pieces into client components; leave static shell, headings, and layout in Server Components.
+
+```tsx
+// Good: server page composes client list
+export default function SeasonsPage() {
+  return (
+    <AppShell>
+      <h1>Seasons</h1>
+      <SeasonList />  {/* "use client" inside SeasonList */}
+    </AppShell>
+  );
+}
+```
+
+### File conventions
+
+| File | Role |
+|------|------|
+| `layout.tsx` | Shared layout; export `metadata` for SEO |
+| `page.tsx` | Route UI (required export: default component) |
+| `loading.tsx` | Suspense fallback (add when fetch latency matters) |
+| `error.tsx` | Route-level error boundary (add for critical flows) |
+| `not-found.tsx` | Custom 404 for a segment |
+
+- Use `generateMetadata` for dynamic titles when entity names are known server-side.
+- Do not create `getServerSideProps`, `getStaticProps`, or API routes in `pages/` — this project uses App Router exclusively.
+
+### Routing & navigation
+
+- Use `next/link` `Link` for internal navigation. Use `<a>` only for external URLs or direct API links.
+- Use `useRouter` from `next/navigation` (not `next/router`).
+- Use `useParams<{ id: string }>()` for dynamic segments (`[id]`).
+- After create/update, redirect with `router.push(\`/{entities}/${id}\`)`.
+
+## API Client Layer (`src/lib/`)
+
+Mirror the `seasons.ts` reference implementation for every entity.
+
+### Structure per entity file
+
+1. **Types** — `{Entity}`, `{Entity}Status` (if applicable), `{Entity}Input`
+2. **Private `request<T>`** — shared fetch wrapper
+3. **Exported CRUD helpers** — `list{Entities}()`, `get{Entity}(id)`, `create{Entity}(input)`, `update{Entity}(id, input)`, `archive{Entity}(id)`
+
+### Fetch conventions
+
+```ts
+const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
+
+async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const response = await fetch(`${apiUrl}${path}`, {
+    ...init,
+    headers: { "Content-Type": "application/json", ...(init?.headers ?? {}) },
+    cache: "no-store",  // PLM data is dynamic; do not cache by default
+  });
+  if (response.status === 204) return undefined as T;
+  const body = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const message = typeof body.error === "string" ? body.error : `Request failed (${response.status})`;
+    throw new Error(message);
+  }
+  return body as T;
+}
+```
+
+- Parse backend `{ error: string }` bodies on failure.
+- Use `archive{Entity}` (DELETE) — never expose hard-delete in UI.
+- Pass `version` from `initial` on update for optimistic locking.
+- Keep all fetch logic in `src/lib/` — components call these helpers, not raw `fetch`.
+
+## Component Patterns
+
+### Page layout
+
+Every entity page wraps content in `AppShell`:
+
+```tsx
+<AppShell>
+  <p className="text-sm tracking-[0.2em] text-[var(--accent)] uppercase">Core PLM</p>
+  <h1 className="mt-2 text-3xl font-semibold tracking-tight">{title}</h1>
+  {/* page content */}
+</AppShell>
+```
+
+- List page: heading, description, "New {entity}" `Link`, `{Entity}List`.
+- New page: heading + `{Entity}Form` with `create{Entity}` + redirect.
+- Detail page: heading + `{Entity}Form` with `initial` + `update{Entity}`.
+- Add nav links in `AppShell.tsx` when introducing a new entity.
+
+### Forms (`{Entity}Form.tsx`)
+
+- Client component with `"use client"`.
+- Use native `<form action={handleSubmit}>` with `FormData` — no form libraries unless the user requests one.
+- Props: `initial?: {Entity}`, `submitLabel: string`, `onSubmit: (input) => Promise<void>`.
+- Track `pending` and `error` state locally.
+- Use `defaultValue` (not `value`) for uncontrolled inputs.
+- Disable submit button while `pending`; show "Saving…" label.
+- Surface API errors in a styled alert (`border-red-500/40 bg-red-500/10`).
+
+### Lists (`{Entity}List.tsx`)
+
+- Client component; fetch in `useEffect` on mount.
+- Handle three states: `loading`, `error`, empty, and data.
+- Link primary identifier (usually `code`) to `/{entities}/${id}`.
+- Use semantic `<table>` for tabular data.
+
+### Error handling in components
+
+```ts
+.catch((caught: unknown) => {
+  setError(caught instanceof Error ? caught.message : "Unable to load {entities}.");
+});
+```
+
+Never swallow errors silently. Never use `any` for caught values.
+
+## Styling (Tailwind CSS v4)
+
+- Global tokens live in `src/app/globals.css` — use CSS variables, not hardcoded hex in components:
+  - `var(--background)`, `var(--foreground)`, `var(--muted)`, `var(--accent)`
+- Import Tailwind once in `globals.css`: `@import "tailwindcss";`
+- Dark theme patterns:
+  - Borders: `border-white/10`, `border-white/15`
+  - Surfaces: `bg-transparent`, `rounded-md`, `rounded-lg`
+  - Primary CTA: `bg-[var(--accent)] text-black`
+  - Muted text: `text-[var(--muted)]`
+- Responsive: use `sm:`, `md:` prefixes (`sm:grid-cols-2`, `sm:text-5xl`).
+- Fonts: loaded in root `layout.tsx` via `next/font/google`; reference `var(--font-geist-sans)` in CSS.
+- Do not add CSS-in-JS libraries, styled-components, or separate `.module.css` files unless explicitly requested.
+
+## TypeScript
+
+- `strict: true` — no implicit `any`, no non-null assertions unless unavoidable.
+- Prefer `type` over `interface` for DTOs (matches existing code).
+- Use string union types for backend enums (`"DRAFT" | "ACTIVE" | "CLOSED"`).
+- Nullable API fields: `string | null`, not `string | undefined` on response types.
+- Optional input fields: `field?: string` or `field?: string | null` as appropriate.
+- Export types from `src/lib/` and import in components — do not duplicate type definitions.
+
+## Data Fetching Strategy (Current Phase)
+
+This project uses **client-side fetching** via `useEffect` + lib helpers. Follow this pattern until Server Components data fetching is adopted project-wide.
+
+When adding Server Component fetching later:
+- Use `async` page components with direct `await list{Entities}()` calls.
+- Pass data as props to client components.
+- Use `loading.tsx` for Suspense boundaries.
+- Do not mix client `useEffect` fetch and server fetch for the same data on one page.
+
+## Performance
+
+- Import only what you need; avoid barrel files that re-export entire modules.
+- Use `next/image` for remote images (with `remotePatterns` in `next.config.ts` when needed).
+- Use `next/font` for Google/local fonts — never load fonts via `<link>` in components.
+- Lazy-load heavy client components with `dynamic(() => import(...), { ssr: false })` only when justified.
+- Do not prematurely memoize (`useMemo`, `useCallback`, `React.memo`).
+
+## Environment & Config
+
+- `NEXT_PUBLIC_*` for browser-accessible values only. Never expose secrets in client bundles.
+- Copy `.env.example` when adding new env vars; document defaults.
+- `next.config.ts` uses `output: "standalone"` for Docker — preserve this.
+- Do not change `outputFileTracingRoot` without understanding monorepo Docker layout.
+
+## Verification
+
+After frontend changes, run:
+
+```bash
+cd apps/web/nextjs && pnpm exec tsc --noEmit
+cd apps/web/nextjs && pnpm lint
+```
+
+For entity work, also smoke-test UI at `http://localhost:3000/{entities}`.
+
+## Do Not
+
+- Add `pages/` router, middleware, or auth unless explicitly requested.
+- Install UI frameworks (shadcn, MUI, Chakra) unless the user asks.
+- Hardcode `http://localhost:8080` in components — use the lib-layer `apiUrl` constant.
+- Put business validation in the frontend — backend `{Entity}Rules` owns invariants.
+- Create one-off `fetch` calls in components — extend `src/lib/`.
+- Use `useEffect` for form submission — use form `action` handlers.
+- Skip `version` on update forms — optimistic locking will break.
+- Add tests, Storybook, or CI changes unless requested.
+
+## New Entity Checklist
+
+When adding a new PLM entity UI, also read the `create-plm-entity` skill. Minimum frontend deliverables:
+
+```
+src/lib/{entities}.ts
+src/components/{Entity}Form.tsx
+src/components/{Entity}List.tsx
+src/app/{entities}/page.tsx
+src/app/{entities}/new/page.tsx
+src/app/{entities}/[id]/page.tsx
+AppShell nav link
+```
+
+Copy Seasons (`seasons.ts`, `SeasonForm`, `SeasonList`, `app/seasons/**`) as the canonical reference.
