@@ -1,0 +1,43 @@
+{
+  "cli_version": "0.10.6",
+  "checkpoint_id": "01M2JHVCK9MX3V4VDGCFWT3798",
+  "session_id": "1aeb623e-a655-49a7-991a-b2420d37b214",
+  "strategy": "manual-commit",
+  "created_at": "2026-09-15T12:49:42.602691Z",
+  "branch": "cursor_quarkus_rules_base",
+  "checkpoints_count": 1,
+  "files_touched": [
+    ".github/workflows/publish-wiki.yml",
+    "README.md"
+  ],
+  "agent": "Cursor",
+  "model": "composer-2.5",
+  "turn_id": "bf1ce21db728",
+  "checkpoint_transcript_start": 256,
+  "transcript_lines_at_start": 256,
+  "compact_transcript_start": 50,
+  "session_metrics": {
+    "turn_count": 5
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-09-15T12:49:42.460488Z",
+    "agent_lines": 21,
+    "agent_removed": 3,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 21,
+    "total_lines_changed": 24,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    }
+  ]
+}
