@@ -1,0 +1,31 @@
+{
+  "cli_version": "0.10.6",
+  "checkpoint_id": "01M2JJ3F0BFDRCY48Z5M7241E3",
+  "session_id": "e01dffe4-a44e-4daa-bc8c-72108b45b3de",
+  "strategy": "manual-commit",
+  "created_at": "2026-09-15T12:54:07.199488Z",
+  "branch": "cursor_quarkus_rules_base",
+  "checkpoints_count": 1,
+  "files_touched": [
+    ".github/workflows/publish-wiki.yml",
+    "docs/wiki/Publishing.md"
+  ],
+  "agent": "Cursor",
+  "model": "cursor-grok-4.6-medium",
+  "turn_id": "ea3418c0205e",
+  "checkpoint_transcript_start": 2,
+  "transcript_lines_at_start": 2,
+  "compact_transcript_start": 1,
+  "initial_attribution": {
+    "calculated_at": "2026-09-15T12:54:07.191781Z",
+    "agent_lines": 66,
+    "agent_removed": 6,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 66,
+    "total_lines_changed": 72,
+    "agent_percentage": 100,
+    "metric_version": 2
+  }
+}
