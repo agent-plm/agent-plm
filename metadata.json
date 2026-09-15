@@ -1,0 +1,20 @@
+{
+  "cli_version": "0.10.6",
+  "checkpoint_id": "01M2JJ3F0BFDRCY48Z5M7241E3",
+  "strategy": "manual-commit",
+  "branch": "cursor_quarkus_rules_base",
+  "checkpoints_count": 1,
+  "files_touched": [
+    ".github/workflows/publish-wiki.yml",
+    "docs/wiki/Publishing.md"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ]
+}
