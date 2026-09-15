@@ -1,12 +1,3 @@
-Run bash scripts/build-wiki.sh wiki-out
-  bash scripts/build-wiki.sh wiki-out
-  shell: /usr/bin/bash -e {0}
-Building wiki pages into wiki-out
-sed: -e expression #2, char 33: Unmatched ( or \(
-Error: Process completed with exit code 1.
-
----
-
 Run git clone "REDACTED" wiki-repo
 Cloning into 'wiki-repo'...
 remote: Repository not found.
