@@ -2,6 +2,7 @@ name: Publish Wiki
 
 on:
   # Publish after main-branch CI succeeds (independent workflow file from ci.yml).
+  # Note: workflow_run inherits a read-only GITHUB_TOKEN from CI — set secret WIKI_PAT.
   workflow_run:
     workflows: [CI]
     types: [completed]
@@ -25,6 +26,9 @@ concurrency:
   group: publish-wiki
   cancel-in-progress: true
 
+permissions:
+  contents: write
+
 jobs:
   publish:
     if: >-
@@ -32,8 +36,6 @@ jobs:
       github.event_name == 'push' ||
       (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - name: Resolve source ref
         id: ref
@@ -42,6 +44,20 @@ jobs:
             echo "sha=${{ github.event.workflow_run.head_sha }}" >> "${GITHUB_OUTPUT}"
           else
             echo "sha=${{ github.sha }}" >> "${GITHUB_OUTPUT}"
+          fi
+
+      - name: Check wiki credentials
+        env:
+          WIKI_PAT: ${{ secrets.WIKI_PAT }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_run" ] && [ -z "${WIKI_PAT}" ]; then
+            echo "::error::Publish Wiki was triggered by CI (workflow_run). GitHub does not grant write access to GITHUB_TOKEN in that case. Add repository secret WIKI_PAT (classic PAT with repo scope), or run this workflow manually via workflow_dispatch after merging to main."
+            exit 1
+          fi
+          if [ -z "${WIKI_PAT}" ]; then
+            echo "WIKI_PAT not set; using GITHUB_TOKEN (requires repo Settings → Actions → General → Read and write permissions)."
+          else
+            echo "Using WIKI_PAT for wiki git access."
           fi
 
       - uses: actions/checkout@v4
@@ -56,19 +72,27 @@ jobs:
           GH_TOKEN: ${{ secrets.WIKI_PAT || secrets.GITHUB_TOKEN }}
           WIKI_TOKEN: ${{ secrets.WIKI_PAT || secrets.GITHUB_TOKEN }}
         run: |
+          set -euo pipefail
           WIKI_URL="https://x-access-token:${WIKI_TOKEN}@github.com/${{ github.repository }}.wiki.git"
+
+          echo "Checking wiki API access..."
+          gh api "repos/${{ github.repository }}" --jq '{has_wiki: .has_wiki, permissions: .permissions}' || true
+          PAGE_COUNT="$(gh api "repos/${{ github.repository }}/wiki/pages" --jq 'length' 2>/dev/null || echo "unavailable")"
+          echo "Existing wiki pages: ${PAGE_COUNT}"
 
           clone_wiki() {
             git clone "${WIKI_URL}" wiki-repo
           }
 
-          if ! clone_wiki 2>/dev/null; then
-            echo "Wiki git repository not found; bootstrapping via GitHub API..."
+          if ! clone_wiki 2>/tmp/wiki-clone.err; then
+            echo "Wiki git clone failed (often means no pages yet or token lacks access):"
+            cat /tmp/wiki-clone.err
+            echo "Bootstrapping wiki via GitHub API..."
             if ! gh api --method POST "repos/${{ github.repository }}/wiki/pages" \
               -f title='Home' \
               -f body='Initializing Agent PLM wiki from CI.' \
               -f format='markdown'; then
-              echo "::error::GitHub Wiki is unavailable. Enable Wiki under Settings → Features for ${{ github.repository }}, then re-run this workflow. If the repo belongs to an organization that restricts GITHUB_TOKEN, add a classic PAT with repo scope as secret WIKI_PAT."
+              echo "::error::Could not create the first wiki page. Confirm Wiki is enabled, then add repository secret WIKI_PAT (classic PAT with repo scope) and re-run. Org repos may also need Settings → Actions → General → Read and write permissions."
               exit 1
             fi
             clone_wiki
@@ -84,4 +108,5 @@ jobs:
             exit 0
           fi
           git commit -m "Sync wiki from agent-plm@${{ steps.ref.outputs.sha }}"
-          git push
+          # Wiki git repositories use master as the default branch.
+          git push origin HEAD:master
