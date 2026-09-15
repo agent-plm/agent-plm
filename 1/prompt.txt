@@ -1,0 +1,1 @@
+generate frontend next.js best practices and rules for cursor

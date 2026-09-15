@@ -1,0 +1,42 @@
+{
+  "cli_version": "0.10.6",
+  "checkpoint_id": "01M2JHNPRBK8YVGQ5HQ2GT5688",
+  "session_id": "e01dffe4-a44e-4daa-bc8c-72108b45b3de",
+  "strategy": "manual-commit",
+  "created_at": "2026-09-15T12:46:36.304284Z",
+  "branch": "cursor_quarkus_rules_base",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "scripts/build-wiki.sh"
+  ],
+  "agent": "Cursor",
+  "model": "cursor-grok-4.6-medium",
+  "turn_id": "ea3418c0205e",
+  "compact_transcript_start": 0,
+  "initial_attribution": {
+    "calculated_at": "2026-09-15T12:46:36.299587Z",
+    "agent_lines": 6,
+    "agent_removed": 6,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 6,
+    "total_lines_changed": 12,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 203,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".cursor/rules/api/quarkus.mdc": 134,
+        "agents.md": 56,
+        "todo.md": 13
+      }
+    }
+  ]
+}
