@@ -2,7 +2,8 @@
 description: >-
   Quarkus 3 + Hibernate ORM / Panache conventions for the PLM API. Apply when
   editing Java in apps/api/quarkus, persistence entities/repositories, Flyway
-  migrations, or adding REST resources and services.
+  migrations, modules/* domain code, or adding REST resources and services.
+  Season is the canonical reference entity; use the create-plm-entity skill for new types.
 globs:
   - apps/api/quarkus/**/*.java
   - apps/api/quarkus/src/main/resources/**
@@ -151,3 +152,144 @@ public class SeasonRecordRepository implements PanacheRepositoryBase<SeasonRecor
 - Do not return JPA entities from REST resources — map to `{Entity}Response` records.
 ---
 ## Flyway migrations
+
+- **Source of truth:** `migrations/` at repo root — **duplicate every migration** to `apps/api/quarkus/src/main/resources/db/migration/`.
+- **Naming:** `V{N}__snake_description.sql` (next version after highest existing).
+- **Runtime:** Flyway runs at startup (`quarkus.flyway.migrate-at-start: true` in `application.yml`).
+- **Hibernate:** `schema-management.strategy: none` — never `drop-and-create`, `update`, or `ddl-auto`.
+- **Postgres:** version 18 in Docker; extensions (`vector`, `pg_trgm`, `pgcrypto`) asserted in `V1__extensions.sql` and created by `infra/postgres/init/01-extensions.sql`.
+
+Current migrations:
+
+| Version | File | Purpose |
+|---------|------|---------|
+| V1 | `V1__extensions.sql` | Assert required Postgres extensions exist |
+| V2 | `V2__entity_and_season.sql` | `entity_type`, `entity`, `season`, `audit_event` + Season type seed |
+| V3 | `V3__temporal_and_audit_tables.sql` | `plm_changeset`, `*_history`, `*_aud` for entity/season/audit_event |
+| V4 | `V4__seed_seasons.sql` | 10 synthetic seasons for local dev (fixed UUIDs) |
+
+When adding a new entity:
+
+1. `INSERT INTO entity_type` with a new UUID constant in `EntityTypes.java`.
+2. `CREATE TABLE {entity}` with `id UUID PRIMARY KEY REFERENCES entity (id) ON DELETE CASCADE`.
+3. Add unique/CHECK constraints for domain invariants in SQL.
+4. Add matching `@Temporal.HistoryTable` / `@Audited.Table` names and Flyway tables (follow V3 pattern).
+5. Copy the same file to both migration directories before merge.
+
+---
+## Domain modules (`modules/{entity}/`)
+
+Pure Java — **no JPA, no Quarkus imports**.
+
+| File | Purpose |
+|------|---------|
+| `{Entity}Status.java` | Enum stored as `String` in DB |
+| `{Entity}Draft.java` | Immutable normalized input record |
+| `{Entity}Rules.java` | `normalize()`, `validate()` — all business invariants |
+
+Services call `Rules.normalize()` then `Rules.validate()` before persist. Throw `{Entity}ValidationException` for 400 responses.
+
+Register module in root `pom.xml` and add `plm-module-{entity}` dependency to `apps/api/quarkus/pom.xml`.
+
+---
+## Request / response DTOs
+
+Location: `io.agentplm.api.{entity}` alongside `{Entity}Resource` / `{Entity}Service`.
+
+- **`{Entity}Request`** — create/update input; include optional `Long version` on update for optimistic locking.
+- **`{Entity}Response`** — merged kernel + extension fields returned to clients (`id`, `name`, `description`, `status`, `version`, timestamps, type-specific columns).
+- Do **not** expose persistence-only fields on request DTOs (`createdBy`, `updatedBy`, internal JSON blobs unless part of contract).
+- Map in `{Entity}Service.toResponse(EntityRecord, {Entity}Record)` — never return JPA entities from REST.
+
+Season reference: `SeasonRequest.java`, `SeasonResponse.java`.
+
+---
+## Application audit trail
+
+Separate from Hibernate `@Audited` row history:
+
+- Persist `AuditEvent` rows on CREATE / UPDATE / ARCHIVE via `AuditEventRepository`.
+- Store compact JSON snapshots in `beforeState` / `afterState` (JSONB).
+- Use action names `"CREATE"`, `"UPDATE"`, `"ARCHIVE"` consistently.
+
+Hibernate temporal history (`*_history`) and audit tables (`*_aud`) are maintained automatically — do not write to them manually.
+
+---
+## Configuration
+
+Primary config: `apps/api/quarkus/src/main/resources/application.yml` (not `application.properties`).
+
+Key settings:
+
+```yaml
+quarkus.hibernate-orm.schema-management.strategy: none
+quarkus.hibernate-orm.unsupported-properties:
+  hibernate.temporal.table_strategy: HISTORY_TABLE
+  hibernate.temporal.changeset_id_supplier: io.agentplm.api.persistence.PlmChangesetSupplier
+quarkus.flyway.migrate-at-start: true
+quarkus.http.cors.origins: ${PLM_CORS_ORIGINS:http://localhost:3000}
+```
+
+`%dev` profile: disable DevServices datasource, disable observability dev services (`quarkus.observability.enabled: false`).
+
+Environment variables: `PLM_DB_URL`, `PLM_DB_USER`, `PLM_DB_PASSWORD`, `PLM_CORS_ORIGINS`.
+
+---
+## Local development
+
+| Command | Purpose |
+|---------|---------|
+| `make dev` | Full stack via `docker-compose.yml` + `docker-compose.dev.yml` (Postgres 18, API hot-reload, Web, gateway) |
+| `make down` | Stop compose stack |
+| `make api` | Run Quarkus dev locally (outside Docker) |
+| `make web` | Run Next.js dev locally |
+| `make test` | Maven tests |
+| `make postgres-volume-reset` | Reset Postgres volume after major PG upgrades |
+
+API dev in Docker uses `Dockerfile.dev` + `gosu` entrypoint running `./mvnw quarkus:dev`.
+
+---
+## Testing
+
+- Framework: Quarkus JUnit + REST Assured.
+- Location: `apps/api/quarkus/src/test/java/`.
+- Naming: `{Entity}ResourceTest.java` for HTTP behavior; `*IT.java` for integration when needed.
+- Module unit tests: `./mvnw -pl modules/{entity} test`.
+- Prefer status codes, response shape, and key field behavior over mocking repositories.
+- Tests may require Docker/Postgres; `%test` profile disables Flyway/Hibernate when configured for unit-only runs.
+
+After API changes:
+
+```bash
+./mvnw -pl apps/api/quarkus -am test
+# compile-only fallback when DB unavailable:
+./mvnw -pl apps/api/quarkus -am -DskipTests compile
+```
+
+---
+## Verification checklist (new entity)
+
+```
+- [ ] Flyway in migrations/ AND db/migration/
+- [ ] EntityTypes constant
+- [ ] modules/{entity} domain + tests
+- [ ] EntityRecord join + {Entity}Record + repositories
+- [ ] {Entity}Service (two-table create, version check, audit events)
+- [ ] {Entity}Resource + DTOs + validation mapper
+- [ ] SeasonResourceTest-style HTTP tests
+- [ ] Next.js lib + UI (see nextjs-frontend.mdc)
+```
+
+For the full end-to-end workflow, use the **create-plm-entity** skill.
+
+---
+## Do not
+
+- Skip the dual Flyway migration copy.
+- Put business validation in REST resources or JPA entity callbacks.
+- Hard-delete kernel rows — archive via terminal status on `EntityRecord`.
+- Call `UUID.randomUUID()` for entity IDs — rely on `@UuidGenerator(VERSION_7)` on flush.
+- Add Spring, javax.persistence, or `@Transactional` from Spring.
+- Create a new exception mapper per status code — reuse `NotFoundExceptionMapper`, `ConflictExceptionMapper`, `{Entity}ValidationExceptionMapper`.
+- Enable Hibernate schema generation or drift from Flyway-managed DDL.
+- Add auth/Cerbos enforcement unless explicitly requested.

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
+import { PageHeader } from "@/components/PageHeader";
 import { SeasonForm } from "@/components/SeasonForm";
 import { archiveSeason, getSeason, updateSeason, type Season } from "@/lib/seasons";
 
@@ -22,11 +23,18 @@ export default function SeasonDetailPage() {
 
   return (
     <AppShell>
-      <p className="text-sm tracking-[0.2em] text-[var(--accent)] uppercase">Core PLM</p>
-      <h1 className="mt-2 mb-8 text-3xl font-semibold tracking-tight">{season?.name ?? "Season"}</h1>
-      {error ? <p className="text-red-400">{error}</p> : null}
+      <PageHeader
+        eyebrow="Core PLM"
+        title={season?.name ?? "Season"}
+        description={season ? `${season.code} · ${season.status}` : "Edit season details"}
+      />
+      {error ? (
+        <p className="mb-4 rounded-lg border border-destructive/20 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          {error}
+        </p>
+      ) : null}
       {season ? (
-        <>
+        <div className="max-w-2xl rounded-xl border border-border bg-card p-6 shadow-sm">
           <SeasonForm
             initial={season}
             submitLabel="Save changes"
@@ -36,7 +44,7 @@ export default function SeasonDetailPage() {
             }}
           />
           <button
-            className="mt-6 text-sm text-[var(--muted)] underline underline-offset-4"
+            className="mt-6 text-sm text-muted-foreground underline underline-offset-4 transition-colors hover:text-foreground"
             type="button"
             onClick={async () => {
               await archiveSeason(season.id);
@@ -45,7 +53,7 @@ export default function SeasonDetailPage() {
           >
             Close season
           </button>
-        </>
+        </div>
       ) : null}
     </AppShell>
   );
