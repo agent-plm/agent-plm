@@ -1,0 +1,43 @@
+{
+  "cli_version": "0.10.6",
+  "checkpoint_id": "01M2JHASFFJZNBD85502F0QR70",
+  "strategy": "manual-commit",
+  "branch": "cursor_quarkus_rules_base",
+  "checkpoints_count": 3,
+  "files_touched": [
+    ".github/workflows/publish-wiki.yml",
+    "README.md",
+    "apps/api/quarkus/src/main/java/io/agentplm/api/persistence/AuditEvent.java",
+    "apps/api/quarkus/src/main/java/io/agentplm/api/persistence/EntityRecord.java",
+    "apps/api/quarkus/src/main/java/io/agentplm/api/persistence/PlmChangeset.java",
+    "apps/api/quarkus/src/main/java/io/agentplm/api/persistence/PlmChangesetSupplier.java",
+    "apps/api/quarkus/src/main/java/io/agentplm/api/persistence/PlmEntity.java",
+    "apps/api/quarkus/src/main/java/io/agentplm/api/persistence/PlmEntityRepository.java",
+    "apps/api/quarkus/src/main/java/io/agentplm/api/persistence/SeasonRecord.java",
+    "apps/api/quarkus/src/main/java/io/agentplm/api/season/SeasonService.java",
+    "apps/api/quarkus/src/main/resources/application.yml",
+    "apps/api/quarkus/src/main/resources/db/migration/V3__temporal_and_audit_tables.sql",
+    "docker-compose.yml",
+    "docs/wiki/Entity-Kernel.md",
+    "docs/wiki/How-It-Works.md",
+    "docs/wiki/Local-Development.md",
+    "migrations/V3__temporal_and_audit_tables.sql",
+    "scripts/build-wiki.sh"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 184994,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 3073760,
+    "output_tokens": 29740,
+    "api_call_count": 3
+  }
+}
