@@ -5,7 +5,7 @@ quarkus:
     port: 8080
     cors:
       enabled: true
-      origins: ${PLM_CORS_ORIGINS:http://localhost:3000}
+      origins: ${PLM_CORS_ORIGINS:https://agent-plm.local,http://localhost:3000}
       headers: accept,authorization,content-type,x-requested-with,x-request-id,x-correlation-id
       methods: GET,POST,PUT,PATCH,DELETE,OPTIONS
   datasource:

@@ -176,7 +176,7 @@ Metadata, Semantic, Ontology, Graph, Workflow, AI, etc. are **logical modules**,
 - Redis or Valkey
 - Authelia
 - Cerbos
-- Nginx for production edge/reverse proxy
+- Traefik for local/production edge reverse proxy
 - Docker Compose
 
 ## Workflow
@@ -261,7 +261,8 @@ plm/
 │   ├── authelia/
 │   ├── cerbos/
 │   ├── redis/
-│   └── nginx/
+│   ├── traefik/
+│   ├── gateway/
 │
 ├── migrations/
 │
@@ -1461,7 +1462,7 @@ api
 web
 ```
 
-Nginx may be optional in local development.
+Traefik may be optional when using direct localhost ports in local development.
 
 ## Production
 
@@ -1470,7 +1471,7 @@ Target:
 ```text
 Internet / Enterprise Network
         ↓
-      Nginx
+     Traefik
         ↓
      Next.js
         ↓

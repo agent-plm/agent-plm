@@ -42,11 +42,15 @@ migrations/          Flyway SQL
 - JDK 25
 - Node.js 22 and pnpm 10
 - Docker Compose (for `make dev`)
+- [mkcert](https://github.com/FiloSottile/mkcert) (for local HTTPS gateway)
 
 Copy environment defaults:
 
 ```bash
 cp .env.example .env
+mkcert -install
+echo "127.0.0.1 agent-plm.local" | sudo tee -a /etc/hosts
+make gateway-certs
 ```
 
 ## Commands
@@ -60,16 +64,18 @@ make compose-config   # validate Compose files
 pnpm --filter @agent-plm/web dev
 ```
 
-API health: `http://localhost:8080/q/health` and `http://localhost:8080/api/health`  
-Quarkus Dev UI (Compose dev only): `http://localhost:8080/q/dev-ui`  
-Seasons API: `http://localhost:8080/api/seasons`  
-UI: `http://localhost:3000/seasons`
+API health: `https://agent-plm.local/api/health` and `https://agent-plm.local/q/health`  
+Quarkus Dev UI (Compose dev only): `https://agent-plm.local/q/dev-ui`  
+Seasons API: `https://agent-plm.local/api/seasons`  
+UI: `https://agent-plm.local/seasons`
+
+Direct localhost fallback: `http://localhost:3000`, `http://localhost:8080/api/seasons`
 
 ## Notes
 
 - Redis/Valkey is not the system of record.
 - Authelia and Cerbos are started in Compose; login and real policies come in later phases.
-- Authelia portal: **https://plm.lvh.me:9091** (HTTPS only; `http://` on port 9091 will fail). Run `make authelia-certs` before `make dev`.
+- Local gateway: **https://agent-plm.local** (Traefik + mkcert). Run `make gateway-certs` before `make dev`.
 - Local web dev uses `Dockerfile.dev` with bind mounts and skips production `next build`; production image uses `apps/web/nextjs/Dockerfile`.
 - Local API dev uses `apps/api/quarkus/Dockerfile.dev` (`quarkus:dev`) via `docker-compose.dev.yml`; production image uses `apps/api/quarkus/Dockerfile`.
 - PostgreSQL 19 from the spec is not used yet; Compose uses `pgvector/pgvector:pg18`.

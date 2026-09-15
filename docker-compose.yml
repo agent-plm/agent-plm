@@ -1,6 +1,24 @@
 name: agent-plm
 
 services:
+  traefik:
+    image: traefik:v3.3
+    command:
+      - --configFile=/etc/traefik/traefik.yml
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./infra/traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./infra/traefik/dynamic:/etc/traefik/dynamic:ro
+      - ./infra/gateway/tls:/certs:ro
+    depends_on:
+      - api
+      - web
+      - authelia
+      - cerbos
+      - rustfs
+
   postgres:
     image: pgvector/pgvector:pg18
     environment:
@@ -58,22 +76,11 @@ services:
         condition: service_healthy
     entrypoint: ["/bootstrap/docker-entrypoint.sh"]
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:9091/api/health >/dev/null 2>&1 || exit 1"]
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:9091/authelia/api/health >/dev/null 2>&1 || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 10
       start_period: 15s
-
-  authelia-gateway:
-    image: nginx:1.27-alpine
-    ports:
-      - "${PLM_AUTHELIA_PORT:-9091}:9091"
-    volumes:
-      - ./infra/authelia/nginx-gateway.conf:/etc/nginx/nginx.conf:ro
-      - ./infra/authelia/tls:/etc/nginx/tls:ro
-    depends_on:
-      authelia:
-        condition: service_started
 
   cerbos:
     image: ghcr.io/cerbos/cerbos:0.46.0
@@ -93,7 +100,7 @@ services:
       PLM_DB_URL: jdbc:postgresql://postgres:5432/${PLM_DB_NAME:-plm}
       PLM_DB_USER: ${PLM_DB_USER:-plm}
       PLM_DB_PASSWORD: ${PLM_DB_PASSWORD:-plm}
-      PLM_CORS_ORIGINS: ${PLM_CORS_ORIGINS:-http://localhost:3000}
+      PLM_CORS_ORIGINS: ${PLM_CORS_ORIGINS:-https://agent-plm.local,http://localhost:3000}
       PLM_OTEL_SDK_DISABLED: "true"
     ports:
       - "${PLM_API_PORT:-8080}:8080"
@@ -112,7 +119,7 @@ services:
       context: .
       dockerfile: apps/web/nextjs/Dockerfile
     environment:
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8080}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-}
     ports:
       - "${PLM_WEB_PORT:-3000}:3000"
     depends_on:

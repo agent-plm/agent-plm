@@ -46,5 +46,7 @@ coverage/
 # Authelia local runtime
 infra/authelia/runtime/*
 !infra/authelia/runtime/.gitkeep
-infra/authelia/tls/*
-!infra/authelia/tls/.gitkeep
+
+# Gateway TLS (mkcert)
+infra/gateway/tls/*
+!infra/gateway/tls/.gitkeep

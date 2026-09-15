@@ -2,7 +2,7 @@ import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
 import { PageHeader } from "@/components/PageHeader";
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
+import { getApiUrl } from "@/lib/api-url";
 
 export default function HomePage() {
   return (
@@ -34,7 +34,7 @@ export default function HomePage() {
           <p className="mt-2 text-sm text-muted-foreground">Inspect the Quarkus REST API for season CRUD.</p>
           <a
             className="mt-4 inline-flex rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
-            href={`${apiUrl}/api/seasons`}
+            href={`${getApiUrl()}/api/seasons`}
           >
             View JSON
           </a>

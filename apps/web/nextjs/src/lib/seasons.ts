@@ -1,3 +1,5 @@
+import { getApiUrl } from "@/lib/api-url";
+
 export type SeasonStatus = "DRAFT" | "ACTIVE" | "CLOSED";
 
 export type Season = {
@@ -25,10 +27,8 @@ export type SeasonInput = {
   version?: number;
 };
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
-
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`${apiUrl}${path}`, {
+  const response = await fetch(`${getApiUrl()}${path}`, {
     ...init,
     headers: {
       "Content-Type": "application/json",

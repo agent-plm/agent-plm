@@ -1,0 +1,77 @@
+http:
+  routers:
+    web:
+      rule: Host(`agent-plm.local`)
+      entryPoints:
+        - websecure
+      service: web
+      priority: 1
+      tls: {}
+
+    api:
+      rule: Host(`agent-plm.local`) && (PathPrefix(`/api`) || PathPrefix(`/q`))
+      entryPoints:
+        - websecure
+      service: api
+      priority: 100
+      tls: {}
+
+    authelia:
+      rule: Host(`agent-plm.local`) && PathPrefix(`/authelia`)
+      entryPoints:
+        - websecure
+      service: authelia
+      priority: 100
+      tls: {}
+
+    cerbos:
+      rule: Host(`agent-plm.local`) && PathPrefix(`/cerbos`)
+      entryPoints:
+        - websecure
+      middlewares:
+        - cerbos-stripprefix
+      service: cerbos
+      priority: 100
+      tls: {}
+
+    rustfs:
+      rule: Host(`agent-plm.local`) && PathPrefix(`/rustfs`)
+      entryPoints:
+        - websecure
+      middlewares:
+        - rustfs-stripprefix
+      service: rustfs
+      priority: 100
+      tls: {}
+
+  middlewares:
+    cerbos-stripprefix:
+      stripPrefix:
+        prefixes:
+          - /cerbos
+    rustfs-stripprefix:
+      stripPrefix:
+        prefixes:
+          - /rustfs
+
+  services:
+    web:
+      loadBalancer:
+        servers:
+          - url: http://web:3000
+    api:
+      loadBalancer:
+        servers:
+          - url: http://api:8080
+    authelia:
+      loadBalancer:
+        servers:
+          - url: http://authelia:9091
+    cerbos:
+      loadBalancer:
+        servers:
+          - url: http://cerbos:3592
+    rustfs:
+      loadBalancer:
+        servers:
+          - url: http://rustfs:9001

@@ -1,4 +1,4 @@
-.PHONY: dev down api web test migrate compose-config authelia-certs postgres-volume-reset
+.PHONY: dev down api web test migrate compose-config gateway-certs gateway-certs-force gateway-check postgres-volume-reset
 
 COMPOSE = docker compose -f docker-compose.yml -f docker-compose.dev.yml
 DOCKER_BUILDKIT = 1
@@ -6,25 +6,33 @@ COMPOSE_DOCKER_CLIENT_BUILD = 1
 export DOCKER_BUILDKIT COMPOSE_DOCKER_CLIENT_BUILD
 export DOCKER_UID := $(shell id -u)
 export DOCKER_GID := $(shell id -g)
-AUTHELIA_TLS_CERT = infra/authelia/tls/cert.pem
-AUTHELIA_TLS_KEY = infra/authelia/tls/key.pem
+GATEWAY_TLS_CERT = infra/gateway/tls/agent-plm.local.pem
+GATEWAY_TLS_KEY = infra/gateway/tls/agent-plm.local-key.pem
 
-authelia-certs:
-	@mkdir -p infra/authelia/tls infra/authelia/runtime
-	@if [ ! -f $(AUTHELIA_TLS_CERT) ]; then \
-		openssl req -x509 -nodes -newkey rsa:4096 -days 3650 \
-			-keyout $(AUTHELIA_TLS_KEY) \
-			-out $(AUTHELIA_TLS_CERT) \
-			-subj "/CN=plm.lvh.me" \
-			-addext "subjectAltName=DNS:plm.lvh.me,DNS:localhost,IP:127.0.0.1"; \
-		echo "Generated $(AUTHELIA_TLS_CERT)"; \
+gateway-certs:
+	@command -v mkcert >/dev/null || { echo "Install mkcert: https://github.com/FiloSottile/mkcert"; exit 1; }
+	@mkdir -p infra/gateway/tls infra/authelia/runtime
+	@if [ ! -f $(GATEWAY_TLS_CERT) ]; then \
+		mkcert -cert-file $(GATEWAY_TLS_CERT) -key-file $(GATEWAY_TLS_KEY) agent-plm.local; \
+		echo "Generated $(GATEWAY_TLS_CERT)"; \
 	fi
 
-authelia-certs-force:
-	@rm -f $(AUTHELIA_TLS_CERT) $(AUTHELIA_TLS_KEY)
-	@$(MAKE) authelia-certs
+gateway-certs-force:
+	@rm -f $(GATEWAY_TLS_CERT) $(GATEWAY_TLS_KEY)
+	@$(MAKE) gateway-certs
 
-dev: authelia-certs
+gateway-check:
+	@if ! grep -q '[[:space:]]agent-plm\.local' /etc/hosts 2>/dev/null; then \
+		echo "agent-plm.local is missing from /etc/hosts. Run once:"; \
+		echo "  echo '127.0.0.1 agent-plm.local' | sudo tee -a /etc/hosts"; \
+		exit 1; \
+	fi
+	@if [ ! -f $(GATEWAY_TLS_CERT) ]; then \
+		echo "Missing $(GATEWAY_TLS_CERT). Run: make gateway-certs"; \
+		exit 1; \
+	fi
+
+dev: gateway-certs gateway-check
 	$(COMPOSE) up --build
 
 down:

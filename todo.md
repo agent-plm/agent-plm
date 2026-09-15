@@ -4,7 +4,6 @@
 - Put a Post PR Merge activity to update and make Github Wiki Published
 - Change the CSS, Font and UI layout
 - Create a Synthetic Script for Loading lage data
-- Add maple dev Container for Observability
 - Have some users/roles in Auth/Authz
 - Update Postgres 19 to custom container
 - Improve Harness and nudge cursor to use new CLI commands

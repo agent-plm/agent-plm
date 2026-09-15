@@ -1,7 +1,7 @@
 ---
 theme: auto
 server:
-  address: tcp://0.0.0.0:9091/
+  address: tcp://0.0.0.0:9091/authelia
 log:
   level: info
 identity_validation:
@@ -13,15 +13,15 @@ authentication_backend:
 access_control:
   default_policy: one_factor
   rules:
-    - domain: plm.lvh.me
+    - domain: agent-plm.local
       policy: one_factor
 session:
   secret: local-dev-only-change-me-session-secret
   cookies:
     - name: authelia_session
-      domain: plm.lvh.me
-      authelia_url: https://plm.lvh.me:9091
-      default_redirection_url: https://plm.lvh.me:9091/
+      domain: agent-plm.local
+      authelia_url: https://agent-plm.local/authelia
+      default_redirection_url: https://agent-plm.local/
 storage:
   encryption_key: local-dev-only-change-me-storage-key
   local:

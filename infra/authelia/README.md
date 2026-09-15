@@ -1,31 +1,27 @@
 # Authelia (local Compose)
 
-Authelia 4 requires HTTPS. Opening `http://…:9091` produces:
+Authelia is exposed through the Traefik gateway at:
 
-`tls: first record does not look like a TLS handshake`
-
-Use this URL instead:
-
-**https://plm.lvh.me:9091**
-
-(`plm.lvh.me` resolves to `127.0.0.1`; accept the self-signed certificate in your browser.)
+**https://agent-plm.local/authelia**
 
 Architecture:
 
-- `authelia` — HTTP internally on port 9091
-- `authelia-gateway` — nginx TLS termination on host port 9091
+- `authelia` — HTTP internally on port 9091, served at subpath `/authelia`
+- `traefik` — TLS termination on `https://agent-plm.local`
 
 Setup:
 
 ```bash
-make authelia-certs
-docker compose -f docker-compose.yml -f docker-compose.dev.yml up authelia authelia-gateway -d --force-recreate
+mkcert -install
+echo "127.0.0.1 agent-plm.local" | sudo tee -a /etc/hosts
+make gateway-certs
+make dev
 ```
 
-If you previously generated certs for `127.0.0.1` only:
+To regenerate gateway certificates:
 
 ```bash
-make authelia-certs-force
+make gateway-certs-force
 ```
 
 Login wiring to the Next.js app is a later phase. Replace all placeholder secrets before production.
