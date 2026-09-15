@@ -1,4 +1,4 @@
-.PHONY: dev down api web test migrate compose-config authelia-certs
+.PHONY: dev down api web test migrate compose-config authelia-certs postgres-volume-reset
 
 COMPOSE = docker compose -f docker-compose.yml -f docker-compose.dev.yml
 DOCKER_BUILDKIT = 1
@@ -33,6 +33,11 @@ down:
 web-volumes-reset:
 	$(COMPOSE) down
 	-docker volume rm agent-plm_web-root-node-modules agent-plm_web-app-node-modules agent-plm_web-pnpm-store 2>/dev/null
+
+postgres-volume-reset:
+	$(COMPOSE) down
+	-docker volume rm agent-plm_postgres-data agent-plm_postgres-data-18 2>/dev/null
+	@echo "Removed Postgres volumes. Run 'make dev' to initialize a fresh Postgres 18 database."
 
 api:
 	./mvnw -pl apps/api/quarkus -am quarkus:dev
