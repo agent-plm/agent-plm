@@ -1,0 +1,66 @@
+Use mkcert to create a local SSL cert for creating a gateway
+
+1. Replace ngnix with Traefik
+2. Traefik will be one stop gateway with only local domain for docker compose , name as agent-plm.local
+3. Route Authelia, Cerbos, rustfs, api, web via Traefik
+4. Everything will be suffix e.g. For API it will be https://agent-plm.local/api/v1/seasons , https://agent-plm.local/authelia etc...
+5. If I miss anything, do ask
+
+---
+
+Implement the plan as specified, it is attached for your reference. Do NOT edit the plan file itself.
+
+To-do's from the plan have already been created. Do not create them again. Mark them as in_progress as you work, starting with the first one. Don't stop until you have completed all the to-dos.
+
+---
+
+Traefik failed 
+2026-09-15T16:28:35Z ERR Failed to retrieve information of the docker client and server host error="Error response from daemon: " providerName=docker
+
+2026-09-15T16:28:35Z ERR Provider error, retrying in 598.421417ms error="Error response from daemon: " providerName=docker
+
+2026-09-15T16:28:36Z ERR Failed to retrieve information of the docker client and server host error="Error response from daemon: " providerName=docker
+
+2026-09-15T16:28:36Z ERR Provider error, retrying in 503.500112ms error="Error response from daemon: " providerName=docker
+
+2026-09-15T16:28:36Z ERR Failed to retrieve information of the docker client and server host error="Error response from daemon: " providerName=docker
+
+2026-09-15T16:28:36Z ERR Provider error, retrying in 1.205176359s error="Error response from daemon: " providerName=docker
+
+2026-09-15T16:28:38Z ERR Failed to retrieve information of the docker client and server host error="Error response from daemon: " providerName=docker
+
+2026-09-15T16:28:38Z ERR Provider error, retrying in 1.619090834s error="Error response from daemon: " providerName=docker
+
+2026-09-15T16:28:39Z ERR Failed to retrieve information of the docker client and server host error="Error response from daemon: " providerName=docker
+
+2026-09-15T16:28:39Z ERR Provider error, retrying in 3.715907335s error="Error response from daemon: " providerName=docker
+
+2026-09-15T16:28:43Z ERR Failed to retrieve information of the docker client and server host error="Error response from daemon: " providerName=docker
+
+2026-09-15T16:28:43Z ERR Provider error, retrying in 4.825601347s error="Error response from daemon: " providerName=docker
+
+2026-09-15T16:28:48Z ERR Failed to retrieve information of the docker client and server host error="Error response from daemon: " providerName=docker
+
+2026-09-15T16:28:48Z ERR Provider error, retrying in 4.682083972s error="Error response from daemon: " providerName=docker
+
+2026-09-15T16:28:52Z ERR Failed to retrieve information of the docker client and server host error="Error response from daemon: " providerName=docker
+
+2026-09-15T16:28:52Z ERR Provider error, retrying in 11.239059109s error="Error response from daemon: " providerName=docker
+
+---
+
+Authelia is available at https://agent-plm.local/authelia
+
+time="2026-09-15T16:30:18Z" level=error msg="Configuration: error occurred performing deprecation mapping for keys 'server.host', 'server.port', and 'server.path' to new key server.address: the new key already exists with value 'tcp://0.0.0.0:9091/' but the deprecated keys and the new key can't both be configured"
+
+time="2026-09-15T16:30:18Z" level=error msg="Configuration: error occurred performing deprecation mapping for keys 'server.host', 'server.port', and 'server.path' to new key server.address: the new key already exists with value 'tcp://0.0.0.0:9091/' but the deprecated keys and the new key can't both be configured"
+
+time="2026-09-15T16:30:18Z" level=fatal msg="Can't continue due to the errors loading the configuration" stack="github.com/spf13/cobra@v1.10.2/command.go:1000          (*Command).execute\ngithub.com/spf13/cobra@v1.10.2/command.go:1148          (*Command).ExecuteC\ngithub.com/spf13/cobra@v1.10.2/command.go:1071          (*Command).Execute\ngithub.com/authelia/authelia/v4/cmd/authelia/main.go:16 main\ninternal/runtime/atomic/types.go:194                    (*Uint32).Load\nruntime/asm_arm64.s:1039                                goexit"
+
+---
+
+https://agent-plm.local/ not working
+
+---
+
+Access to fetch at 'http://localhost:8080/api/seasons' from origin 'https://agent-plm.local' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.

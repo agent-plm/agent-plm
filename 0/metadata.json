@@ -1,0 +1,103 @@
+{
+  "cli_version": "0.10.6",
+  "checkpoint_id": "01M2JZ3JG68A7CEK6S093BBFNG",
+  "session_id": "1f0482d9-d8a1-488a-b2b1-27e3c19704ce",
+  "strategy": "manual-commit",
+  "created_at": "2026-09-15T16:41:32.105125Z",
+  "branch": "main",
+  "checkpoints_count": 6,
+  "save_step_count": 5,
+  "files_touched": [
+    ".env.example",
+    ".gitignore",
+    "Makefile",
+    "PLM_SPEC.md",
+    "README.md",
+    "apps/api/quarkus/src/main/resources/application.yml",
+    "apps/web/nextjs/.env.example",
+    "apps/web/nextjs/src/app/page.tsx",
+    "apps/web/nextjs/src/lib/api-url.ts",
+    "apps/web/nextjs/src/lib/seasons.ts",
+    "docker-compose.prod.yml",
+    "docker-compose.yml",
+    "docs/wiki/Local-Development.md",
+    "infra/README.md",
+    "infra/authelia/README.md",
+    "infra/authelia/configuration.yml",
+    "infra/authelia/docker-entrypoint.sh",
+    "infra/authelia/nginx-gateway.conf",
+    "infra/authelia/tls/.gitkeep",
+    "infra/authelia/tls/cert.pem",
+    "infra/authelia/tls/key.pem",
+    "infra/gateway/tls/.gitkeep",
+    "infra/nginx/README.md",
+    "infra/nginx/default.conf",
+    "infra/traefik/README.md",
+    "infra/traefik/dynamic/routes.yml",
+    "infra/traefik/dynamic/tls.yml",
+    "infra/traefik/traefik.yml"
+  ],
+  "agent": "Cursor",
+  "model": "composer-2.5",
+  "turn_id": "9683abd6654c",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 69318,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2113504,
+    "output_tokens": 20002,
+    "api_call_count": 5
+  },
+  "session_metrics": {
+    "turn_count": 6
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-09-15T16:41:32.087709Z",
+    "agent_lines": 349,
+    "agent_removed": 175,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 349,
+    "total_lines_changed": 525,
+    "agent_percentage": 99.80952380952381,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 289,
+      "agent_lines_removed": 168
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 323,
+      "agent_lines_removed": 168
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 323,
+      "agent_lines_removed": 169
+    },
+    {
+      "checkpoint_number": 5,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 334,
+      "agent_lines_removed": 169
+    }
+  ]
+}

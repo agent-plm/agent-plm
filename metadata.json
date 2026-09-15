@@ -1,0 +1,53 @@
+{
+  "cli_version": "0.10.6",
+  "checkpoint_id": "01M2JZ3JG68A7CEK6S093BBFNG",
+  "strategy": "manual-commit",
+  "branch": "main",
+  "checkpoints_count": 6,
+  "files_touched": [
+    ".env.example",
+    ".gitignore",
+    "Makefile",
+    "PLM_SPEC.md",
+    "README.md",
+    "apps/api/quarkus/src/main/resources/application.yml",
+    "apps/web/nextjs/.env.example",
+    "apps/web/nextjs/src/app/page.tsx",
+    "apps/web/nextjs/src/lib/api-url.ts",
+    "apps/web/nextjs/src/lib/seasons.ts",
+    "docker-compose.prod.yml",
+    "docker-compose.yml",
+    "docs/wiki/Local-Development.md",
+    "infra/README.md",
+    "infra/authelia/README.md",
+    "infra/authelia/configuration.yml",
+    "infra/authelia/docker-entrypoint.sh",
+    "infra/authelia/nginx-gateway.conf",
+    "infra/authelia/tls/.gitkeep",
+    "infra/authelia/tls/cert.pem",
+    "infra/authelia/tls/key.pem",
+    "infra/gateway/tls/.gitkeep",
+    "infra/nginx/README.md",
+    "infra/nginx/default.conf",
+    "infra/traefik/README.md",
+    "infra/traefik/dynamic/routes.yml",
+    "infra/traefik/dynamic/tls.yml",
+    "infra/traefik/traefik.yml"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 69318,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2113504,
+    "output_tokens": 20002,
+    "api_call_count": 5
+  }
+}
