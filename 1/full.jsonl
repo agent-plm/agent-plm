@@ -1,0 +1,2 @@
+{"role":"user","message":{"content":[{"type":"text","text":"<timestamp>Tuesday, Sep 15, 2026, 5:36 PM (UTC+5:30)</timestamp>\n<user_query>\ngenerate frontend next.js best practices and rules for cursor\n</user_query>"}]}}
+{"type":"turn_ended","status":"error","error":"[resource_exhausted] Error"}
