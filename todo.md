@@ -11,3 +11,12 @@
 - Publish API Testing, UI Testing, Quarkus Testing Reults in Ci/CD
 - Add Clickhouse Obs
 - Add SSL Cert and domain for all
+
+29-Sep-2026
+
+- Update to JDK 27
+- Fix the Wiki Pipeline to Publish notes to Wiki
+- Add Special Skills, Rules, Hooks to Project Level
+- Setup API Testing Tool, local and agent , also skills.md
+- Develop dedicated Quarkus Skill
+- 
