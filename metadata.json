@@ -1,0 +1,37 @@
+{
+  "cli_version": "0.10.6",
+  "checkpoint_id": "01M3VZ84XW7JKQPRKX3RXXW419",
+  "strategy": "manual-commit",
+  "branch": "Auth",
+  "checkpoints_count": 1,
+  "files_touched": [
+    ".env.example",
+    ".gitignore",
+    "Makefile",
+    "README.md",
+    "apps/api/quarkus/pom.xml",
+    "apps/api/quarkus/src/main/resources/application.yml",
+    "docker-compose.yml",
+    "docs/wiki/Local-Development.md",
+    "infra/authelia/README.md",
+    "infra/authelia/configuration.yml",
+    "infra/authelia/docker-entrypoint.sh",
+    "infra/authelia/users_database.yml"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 142975,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 873696,
+    "output_tokens": 2750,
+    "api_call_count": 1
+  }
+}

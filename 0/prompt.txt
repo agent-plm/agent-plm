@@ -1,0 +1,43 @@
+Whats multiple page.tsx in season for ui
+
+---
+
+Lets build Authentication
+
+1. Add 3 simple users and passwords to Authelia yaml for testing, keep passwords simple as username
+2. Let's only build Auth in API Layer i.e. Quarkus
+3. Question? Should the Auth be at Traefik or Authelia or Quarkus?
+4. Once everything is done and working as expected, will see UI, do not touch anything on UI/NextJS
+
+---
+
+Implement the plan as specified, it is attached for your reference. Do NOT edit the plan file itself.
+
+To-do's from the plan have already been created. Do not create them again. Mark them as in_progress as you work, starting with the first one. Don't stop until you have completed all the to-dos.
+
+---
+
+Authelia is avaliable at https://agent-plm.local/authelia via Traefik
+
+2026-09-16 07:59:23,470 WARN  [io.quarkus.oidc.common.runtime.OidcCommonUtils] (vert.x-eventloop-thread-1) Discovery request http://authelia:9091/authelia/.well-known/openid-configuration has failed, status code: 400, error message: 400 Bad Request
+api-1       | 2026-09-16 07:59:23,471 WARN  [io.quarkus.oidc.common.runtime.OidcCommonUtils] (vert.x-eventloop-thread-1) OIDC Server is not available:: io.quarkus.oidc.common.runtime.OidcEndpointAccessException
+api-1       |   at io.quarkus.oidc.common.runtime.OidcCommonUtils.lambda$doDiscoverMetadata$6(OidcCommonUtils.java:752)
+api-1       |   at io.smallrye.context.impl.wrappers.SlowContextualFunction.apply(SlowContextualFunction.java:21)
+api-1       |   at io.smallrye.mutiny.operators.uni.UniOnItemTransform$UniOnItemTransformProcessor.onItem(UniOnItemTransform.java:36)
+api-1       |   at io.smallrye.mutiny.operators.uni.builders.UniCreateFromKnownItem$KnownItemSubscription.forward(UniCreateFromKnownItem.java:42)
+api-1       |   at io.smallrye.mutiny.operators.uni.builders.UniCreateFromKnownItem.subscribe(UniCreateFromKnownItem.java:23)
+api-1       |   at io.smallrye.mutiny.operators.AbstractUni.subscribe(AbstractUni.java:35)
+api-1       |   at io.smallrye.mutiny.operators.uni.UniOnItemTransform.subscribe(UniOnItemTransform.java:22)
+api-1       |   at io.smallrye.mutiny.operators.AbstractUni.subscribe(AbstractUni.java:35)
+api-1       |   at io.smallrye.mutiny.operators.uni.UniOnItemTransformToUni$UniOnItemTransformToUniProcessor.performInnerSubscription(UniOnItemTransformToUni.java:83)
+api-1       |   at io.smallrye.mutiny.operators.uni.UniOnItemTransformToUni$UniOnItemTransformToUniProcessor.onItem(UniOnItemTransformToUni.java:59)
+api-1       |   at io.smallrye.mutiny.operators.uni.UniOnItemTransformToUni$UniOnItemTransformToUniProcessor.onItem(UniOnItemTransformToUni.java:62)
+api-1       |   at io.smallrye.mutiny.vertx.AsyncResultUni.lambda$subscribe$1(AsyncResultUni.java:35)
+api-1       |   at io.smallrye.mutiny.vertx.DelegatingHandler.handle(DelegatingHandler.java:25)
+api-1       |   at io.vertx.ext.web.client.impl.HttpContext.handleDispatchResponse(HttpContext.java:403)
+api-1       |   at io.vertx.ext.web.client.impl.HttpContext.execute(HttpContext.java:385)
+api-1       |   at io.vertx.ext.web.client.impl.HttpContext.next(HttpContext.java:363)
+
+---
+
+Show me a summary of all changes till date
