@@ -102,12 +102,19 @@ services:
       PLM_DB_PASSWORD: ${PLM_DB_PASSWORD:-plm}
       PLM_CORS_ORIGINS: ${PLM_CORS_ORIGINS:-https://agent-plm.local,http://localhost:3000}
       PLM_OTEL_SDK_DISABLED: "true"
+      PLM_OIDC_AUTH_SERVER_URL: ${PLM_OIDC_AUTH_SERVER_URL:-https://agent-plm.local/authelia}
+      PLM_OIDC_ISSUER: ${PLM_OIDC_ISSUER:-https://agent-plm.local/authelia}
+      PLM_OIDC_CLIENT_SECRET: ${PLM_OIDC_CLIENT_SECRET:-local-dev-plm-api-secret}
+    extra_hosts:
+      - "agent-plm.local:host-gateway"
     ports:
       - "${PLM_API_PORT:-8080}:8080"
     depends_on:
       postgres:
         condition: service_healthy
       redis:
+        condition: service_healthy
+      authelia:
         condition: service_healthy
       cerbos:
         condition: service_started

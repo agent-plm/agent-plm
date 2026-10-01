@@ -47,6 +47,10 @@ coverage/
 infra/authelia/runtime/*
 !infra/authelia/runtime/.gitkeep
 
+# Authelia OIDC keys (generated locally)
+infra/authelia/oidc/*
+!infra/authelia/oidc/.gitkeep
+
 # Gateway TLS (mkcert)
 infra/gateway/tls/*
 !infra/gateway/tls/.gitkeep

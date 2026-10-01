@@ -1,9 +1,20 @@
 users:
   admin:
     displayname: Administrator
-    # Local-only placeholder hash; replace before enabling login (Phase 1 does not wire Authelia to the UI).
-    password: "$argon2id$v=19$m=65536,t=3,p=4$YnN2ZWxiZXh0cHJvdg$8CWTConBIrXXsQaco3RYt8RoJmxqnpKUXKzY/sQtd7A"
+    password: "$argon2id$v=19$m=65536,t=3,p=4$sOvK1nSUVffg3QSZkWhy9A$BghcrpCiWj2Z7ssk/gI51NCJTw0YXq2yNSMGbCHBKL4"
     email: admin@localhost
     groups:
       - admins
       - dev
+  planner:
+    displayname: Planner
+    password: "$argon2id$v=19$m=65536,t=3,p=4$LWso7peMs6ivPY5nGul/Ag$f3pIEP/7KfBMsBfp3AuW+O6+Fj12YqH39ItUz9BOyZM"
+    email: planner@localhost
+    groups:
+      - planners
+  viewer:
+    displayname: Viewer
+    password: "$argon2id$v=19$m=65536,t=3,p=4$2xrNaXUUHQcmxjb8I3kHaQ$eSCTw9Ej7c7/4fEHBIJdqwRPu8eXk9frfeTqC7EKrF4"
+    email: viewer@localhost
+    groups:
+      - viewers

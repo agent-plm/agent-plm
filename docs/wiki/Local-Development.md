@@ -30,6 +30,18 @@ make dev             # full stack
 
 Direct localhost fallback (optional): `http://localhost:3000`, `http://localhost:8080/api/seasons`
 
+## Authentication (API)
+
+Protected API routes require a Bearer JWT from Authelia OIDC. Public routes: `/api/health`, `/api/info`.
+
+Test users: `admin`/`admin`, `planner`/`planner`, `viewer`/`viewer` at `https://agent-plm.local/authelia`.
+
+See [infra/authelia/README.md](../../infra/authelia/README.md) for Postman token setup.
+
+```bash
+curl -H "Authorization: Bearer $TOKEN" https://agent-plm.local/api/seasons
+```
+
 ## Common commands
 
 ```bash
@@ -46,5 +58,6 @@ Compose services: PostgreSQL (pgvector), RustFS, Valkey, Authelia, Cerbos, Traef
 ## Notes
 
 - Valkey is not the system of record.
-- Authelia and Cerbos start in Compose; full login flows arrive in later phases.
+- Authelia issues OIDC tokens; the Quarkus API validates Bearer JWTs on `/api/*` (except health/info).
+- Cerbos starts in Compose; policy enforcement arrives in a later phase.
 - Web dev uses `Dockerfile.dev` with bind mounts; production uses `apps/web/nextjs/Dockerfile`.

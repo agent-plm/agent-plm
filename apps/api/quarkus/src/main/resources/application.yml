@@ -8,6 +8,25 @@ quarkus:
       origins: ${PLM_CORS_ORIGINS:https://agent-plm.local,http://localhost:3000}
       headers: accept,authorization,content-type,x-requested-with,x-request-id,x-correlation-id
       methods: GET,POST,PUT,PATCH,DELETE,OPTIONS
+    auth:
+      permission:
+        public:
+          paths: /api/health,/api/info,/q/health,/q/health/*
+          policy: permit
+        authenticated:
+          paths: /api/*
+          policy: authenticated
+  oidc:
+    enabled: true
+    application-type: service
+    auth-server-url: ${PLM_OIDC_AUTH_SERVER_URL:https://agent-plm.local/authelia}
+    token:
+      issuer: ${PLM_OIDC_ISSUER:https://agent-plm.local/authelia}
+    client-id: plm-api
+    credentials:
+      secret: ${PLM_OIDC_CLIENT_SECRET:local-dev-plm-api-secret}
+    tls:
+      verification: none
   datasource:
     db-kind: postgresql
     username: ${PLM_DB_USER:plm}
@@ -46,6 +65,9 @@ quarkus:
       migrate-at-start: true
     observability:
       enabled: false
+    oidc:
+      tls:
+        verification: none
     otel:
       sdk:
         disabled: true
@@ -59,3 +81,11 @@ quarkus:
       migrate-at-start: false
     hibernate-orm:
       enabled: false
+    oidc:
+      enabled: false
+    http:
+      auth:
+        permission:
+          authenticated:
+            paths: /*
+            policy: permit

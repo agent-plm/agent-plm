@@ -74,8 +74,8 @@ Direct localhost fallback: `http://localhost:3000`, `http://localhost:8080/api/s
 ## Notes
 
 - Redis/Valkey is not the system of record.
-- Authelia and Cerbos are started in Compose; login and real policies come in later phases.
-- Local gateway: **https://agent-plm.local** (Traefik + mkcert). Run `make gateway-certs` before `make dev`.
+- Authelia issues OIDC tokens; the Quarkus API validates Bearer JWTs on `/api/*` (except health/info). Test users: `admin`/`admin`, `planner`/`planner`, `viewer`/`viewer`.
+- Local gateway: **https://agent-plm.local** (Traefik + mkcert). Run `make gateway-certs` and `make authelia-oidc-keys` before `make dev`.
 - Local web dev uses `Dockerfile.dev` with bind mounts and skips production `next build`; production image uses `apps/web/nextjs/Dockerfile`.
 - Local API dev uses `apps/api/quarkus/Dockerfile.dev` (`quarkus:dev`) via `docker-compose.dev.yml`; production image uses `apps/api/quarkus/Dockerfile`.
 - PostgreSQL 19 from the spec is not used yet; Compose uses `pgvector/pgvector:pg18`.

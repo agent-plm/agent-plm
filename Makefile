@@ -1,4 +1,4 @@
-.PHONY: dev down api web test migrate compose-config gateway-certs gateway-certs-force gateway-check postgres-volume-reset
+.PHONY: dev down api web test migrate compose-config gateway-certs gateway-certs-force gateway-check authelia-hash authelia-oidc-keys postgres-volume-reset
 
 COMPOSE = docker compose -f docker-compose.yml -f docker-compose.dev.yml
 DOCKER_BUILDKIT = 1
@@ -32,7 +32,7 @@ gateway-check:
 		exit 1; \
 	fi
 
-dev: gateway-certs gateway-check
+dev: gateway-certs gateway-check authelia-oidc-keys
 	$(COMPOSE) up --build
 
 down:
@@ -63,3 +63,18 @@ migrate:
 
 compose-config:
 	$(COMPOSE) config >/dev/null
+
+authelia-hash:
+	@docker run --rm authelia/authelia:4 authelia crypto hash generate argon2 --password '$(PASSWORD)'
+
+AUTHELIA_OIDC_KEY = infra/authelia/oidc/oidc.key
+AUTHELIA_OIDC_CERT = infra/authelia/oidc/oidc.crt
+
+authelia-oidc-keys:
+	@mkdir -p infra/authelia/oidc
+	@if [ ! -f $(AUTHELIA_OIDC_KEY) ]; then \
+		docker run --rm -v "$(CURDIR)/infra/authelia/oidc:/out" authelia/authelia:4 \
+			authelia crypto certificate rsa generate --directory /out \
+			--common-name 'Authelia OIDC' --file.private-key oidc.key --file.certificate oidc.crt; \
+		echo "Generated $(AUTHELIA_OIDC_KEY)"; \
+	fi
